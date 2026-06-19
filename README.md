@@ -56,3 +56,34 @@ The concept of **object references and relationships** - specifically how `Cours
 3. Run: `java Main`
 
 Expected output will show course information, instructor details, and student profiles.
+
+## Day 1 Exercise 03 - Add a CourseOffering Class
+
+### Question: Why is CourseOffering more useful than using only Course when building a real web application?
+
+A `Course` is just a template — e.g. "Java Fundamentals" — but in a real system the same course can run many times, with different instructors, dates, and capacities. If we only had `Course`, we couldn't represent two different intakes of the same course at the same time, or track which specific run a student enrolled in.
+
+`CourseOffering` separates "what is taught" (the `Course`) from "when/how/by whom it is delivered" (the offering). This matches how scheduling, enrollment, and capacity actually work on a real platform:
+
+- The same `Course` can have multiple `CourseOffering`s (different intakes/dates).
+- Each offering can have its own instructor, start/end dates, capacity, and delivery mode (Physical/Online/Hybrid).
+- Students enroll in a specific `CourseOffering`, not just a `Course`, so the system can track seats remaining and schedule conflicts correctly.
+
+This mirrors how the project will later map onto a Spring Boot + MongoDB + React stack, where `Course` and `CourseOffering` would likely be separate collections/documents with a reference between them.
+
+### AI-Assisted Note
+
+Used AI (Claude Code) to scaffold `CourseOffering.java` following the same style as the existing `Course`/`Instructor`/`Student` classes, wire it into `Main.java` with two sample offerings, and verify the program compiles and runs correctly.
+
+
+Before submitting, check:
+
+- [/] `CourseOffering.java` exists.
+- [/] The class has all required fields.
+- [/] Getter methods are included.
+- [/] Constructor is working.
+- [/] `printOfferingSummary()` works.
+- [/] `Main.java` creates at least two course offerings.
+- [/] Program runs successfully.
+- [/] Code has been committed and pushed to GitHub.
+- [/] README reflection is completed.

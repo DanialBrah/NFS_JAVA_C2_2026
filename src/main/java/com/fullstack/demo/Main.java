@@ -35,5 +35,19 @@ public class Main {
         System.out.println("=== Student Profiles ===");
         student1.printProfile();
         student2.printProfile();
+
+        // Create a second course and instructor for the course offerings demo
+        Instructor instructor2 = new Instructor("Aina Rahman", "aina@school.com", "Software Engineering");
+        Course course2 = new Course("Web Development", "CS202", "Programming", true);
+
+        // Create at least two course offerings
+        CourseOffering offering1 = new CourseOffering("OFF001", "Introduction to Java - June 2026 Intake",course1, instructor1, "2026-06-19", "2026-08-19", 25, "Physical");
+
+        CourseOffering offering2 = new CourseOffering("OFF002","Web Development - July 2026 Intake", course2, instructor2, "2026-07-01", "2026-09-01", 30, "Online");
+
+        System.out.println("=== Course Offerings ===");
+        offering1.printOfferingSummary();
+        System.out.println();
+        offering2.printOfferingSummary();
     }
 }
