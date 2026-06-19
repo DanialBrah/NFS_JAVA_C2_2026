@@ -5,11 +5,12 @@ public class Main {
         Instructor instructor1 = new Instructor("Dr. Alice Smith", "alice@school.com", "Computer Science");
         
         // Create courses
-        Course course1 = new Course("Introduction to Java", "CS101");
+        Course course1 = new Course("Introduction to Java", "CS101", "Programming", true);
         
         // Assign instructor to course
         course1.assignInstructor(instructor1);
-        
+        course1.printSummary();
+
         // Create students
         Student student1 = new Student("John Doe", "S001");
         Student student2 = new Student("Jane Johnson", "S002");
