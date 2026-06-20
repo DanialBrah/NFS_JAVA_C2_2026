@@ -2,6 +2,8 @@ package com.fullstack.demo;
 
 import java.util.List;
 
+import com.fullstack.demo.exception.CourseNotFoundException;
+import com.fullstack.demo.exception.InvalidCourseException;
 import com.fullstack.demo.model.Course;
 import com.fullstack.demo.repository.CourseRepository;
 import com.fullstack.demo.repository.InMemoryCourseRepository;
@@ -92,6 +94,38 @@ public class CourseServiceDemo {
         try {
             courseService.createCourse(new Course("C008", "No Level Course", 10, ""));
         } catch (RuntimeException e) {
+            System.out.println("Validation error: " + e.getMessage());
+        }
+
+        System.out.println();
+        System.out.println("=== Update Duration ===");
+        Course updatedCourse = courseService.updateDuration("C001", 20);
+        System.out.println(updatedCourse.getCourseId() + " duration updated to " + updatedCourse.getDurationHours() + " hours");
+
+        System.out.println();
+        System.out.println("=== Delete Course ===");
+        courseService.deleteCourse("C003");
+        System.out.println("C003 deleted successfully");
+
+        System.out.println();
+        System.out.println("=== Remaining Courses ===");
+        for (Course course : courseService.getAllCourses()) {
+            System.out.println(course.getCourseId() + " - " + course.getTitle());
+        }
+
+        System.out.println();
+        System.out.println("=== Find Deleted Course ===");
+        try {
+            courseService.getCourseById("C003");
+        } catch (CourseNotFoundException e) {
+            System.out.println("Course not found error: " + e.getMessage());
+        }
+
+        System.out.println();
+        System.out.println("=== Invalid Duration Test ===");
+        try {
+            courseService.updateDuration("C002", 0);
+        } catch (InvalidCourseException e) {
             System.out.println("Validation error: " + e.getMessage());
         }
     }
