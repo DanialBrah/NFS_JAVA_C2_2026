@@ -35,10 +35,11 @@ public class Instructor {
         this.expertise = requireText(expertise, "Expertise");
     }
 
-    public void getProfile() {
+    public void printProfile() {
         System.out.println("Instructor ID: " + instructorId);
         System.out.println("Name: " + instructorName);
         System.out.println("Expertise: " + expertise);
+        System.out.println("----------------------------");
     }
 
     private static String requireText(String value, String fieldName) {

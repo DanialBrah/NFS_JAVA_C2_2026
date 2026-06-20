@@ -2,13 +2,17 @@ package com.fullstack.demo.model;
 
 public class Student {
     private String studentId;
-    private String studentName;
+    private String name;
     private String email;
+    private Course enrolledCourse;
+    private double gpa;
 
-    public Student(String studentId, String studentName, String email) {
+    public Student(String studentId, String name, String email) {
         setStudentId(studentId);
-        setStudentName(studentName);
+        setName(name);
         setEmail(email);
+        this.enrolledCourse = null;
+        this.gpa = 0.0;
     }
 
     public String getStudentId() {
@@ -19,12 +23,12 @@ public class Student {
         this.studentId = requireText(studentId, "Student ID");
     }
 
-    public String getStudentName() {
-        return studentName;
+    public String getName() {
+        return name;
     }
 
-    public void setStudentName(String studentName) {
-        this.studentName = requireText(studentName, "Student Name");
+    public void setName(String name) {
+        this.name = requireText(name, "Name");
     }
 
     public String getEmail() {
@@ -32,19 +36,40 @@ public class Student {
     }
 
     public void setEmail(String email) {
-        String cleanEmail = requireText(email, "Email");
+        this.email = requireText(email, "Email");
+    }
 
-        if (!cleanEmail.contains("@")) {
-            throw new IllegalArgumentException("Email must contain @.");
-        }
+    public Course getEnrolledCourse() {
+        return enrolledCourse;
+    }
 
-        this.email = cleanEmail;
+    public void setEnrolledCourse(Course enrolledCourse) {
+        this.enrolledCourse = enrolledCourse;
+    }
+
+    public void enrollCourse(Course course) {
+        setEnrolledCourse(course);
+    }
+
+    public double getGpa() {
+        return gpa;
+    }
+
+    public void setGpa(double gpa) {
+        this.gpa = gpa;
     }
 
     public void printProfile() {
+        System.out.println("=== Student Profile ===");
         System.out.println("Student ID: " + studentId);
-        System.out.println("Name: " + studentName);
+        System.out.println("Name: " + name);
         System.out.println("Email: " + email);
+        System.out.println("GPA: " + gpa);
+        if (enrolledCourse != null) {
+            System.out.println("Enrolled Course: " + enrolledCourse.getTitle());
+        } else {
+            System.out.println("Enrolled Course: None");
+        }
         System.out.println("----------------------------");
     }
 

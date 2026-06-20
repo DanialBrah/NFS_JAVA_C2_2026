@@ -6,6 +6,7 @@ public class Course {
     private int durationHours;
     private String level;
     private Instructor instructor;
+    private boolean active;
 
     public Course(String courseId, String title, int durationHours, String level) {
         setCourseId(courseId);
@@ -71,13 +72,13 @@ public class Course {
         System.out.println("Title: " + title);
         System.out.println("Duration: " + durationHours + " hours");
         System.out.println("Level: " + level);
+        System.out.println("Status: " + (active ? "Active" : "Inactive"));
 
         if (instructor == null) {
             System.out.println("Instructor: Not assigned yet");
         } else {
             System.out.println("Instructor: " + instructor.getInstructorName());
         }
-
         System.out.println("----------------------------");
     }
 

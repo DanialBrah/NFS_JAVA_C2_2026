@@ -40,7 +40,7 @@ public class StudentService {
         List<Student> results = new ArrayList<>();
 
         for (Student student : studentRepository.findAll()) {
-            if (student.getStudentName().toLowerCase().contains(safeKeyword)) {
+            if (student.getName().toLowerCase().contains(safeKeyword)) {
                 results.add(student);
             }
         }
@@ -53,7 +53,7 @@ public class StudentService {
 
         return studentRepository.findAll()
                 .stream()
-                .filter(student -> student.getStudentName().toLowerCase().contains(safeKeyword))
+                .filter(student -> student.getName().toLowerCase().contains(safeKeyword))
                 .toList();
     }
 
@@ -64,7 +64,7 @@ public class StudentService {
         if (isBlank(student.getStudentId())) {
             throw new InvalidStudentException("Student ID is required.");
         }
-        if (isBlank(student.getStudentName())) {
+        if (isBlank(student.getName())) {
             throw new InvalidStudentException("Student name is required.");
         }
         if (isBlank(student.getEmail())) {
