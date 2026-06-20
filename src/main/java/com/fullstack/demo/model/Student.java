@@ -31,6 +31,10 @@ public class Student {
         this.name = requireText(name, "Name");
     }
 
+    public void setStudentName(String name) {
+        this.name = requireText(name, "Student Name");
+    }
+
     public String getEmail() {
         return email;
     }
