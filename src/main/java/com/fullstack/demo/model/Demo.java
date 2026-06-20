@@ -1,4 +1,4 @@
-package com.fullstack.demo;
+package com.fullstack.demo.model;
 public class Demo {
     public static void main(String[] args) {
         System.out.println("Hello, World!");

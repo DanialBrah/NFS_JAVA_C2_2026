@@ -1,4 +1,10 @@
 package com.fullstack.demo;
+
+import com.fullstack.demo.model.Course;
+import com.fullstack.demo.model.CourseOffering;
+import com.fullstack.demo.model.Instructor;
+import com.fullstack.demo.model.Student;
+
 public class Main {
     public static void main(String[] args) {
         // Create an instructor
