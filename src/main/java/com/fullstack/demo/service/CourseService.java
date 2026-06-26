@@ -59,6 +59,36 @@ public class CourseService {
         return results;
     }
 
+    public List<Course> searchByLevelUsingLoop(String level) {
+        String safeLevel = level == null ? "" : level.trim();
+        List<Course> results = new ArrayList<>();
+
+        for (Course course : courseRepository.findAll()) {
+            if (course.getLevel().equalsIgnoreCase(safeLevel)) {
+                results.add(course);
+            }
+        }
+        return results;
+    }
+
+    public List<Course> searchByLevelUsingStream(String level) {
+        String safeLevel = level == null ? "" : level.trim();
+        return courseRepository.findAll().stream()
+                .filter(course -> course.getLevel().equalsIgnoreCase(safeLevel))
+                .toList();
+    }
+
+    public List<Course> searchByMinimumDurationUsingLoop(int minimumHours) {
+        List<Course> results = new ArrayList<>();
+
+        for (Course course : courseRepository.findAll()) {
+            if (course.getDurationHours() >= minimumHours) {
+                results.add(course);
+            }
+        }
+        return results;
+    }
+
     public List<Course> filterByLevel(String level) {
         String safeLevel = level == null ? "" : level.trim();
 

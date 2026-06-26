@@ -163,3 +163,25 @@ Before submitting, check:
 - [/] Printed all course offerings.
 - [/] Code comments explain composition.
 - [/] Code compiles and runs.
+
+## Day 3 Exercise 05 - Write Search Using Loop, Then Compare with Stream
+
+### Question: Which version is easier to understand: loop or stream? Why?
+
+The loop version (`searchByLevelUsingLoop`) is easier to understand at first, because every step is spelled out: create an empty list, go through each course one at a time, check a condition, add it if it matches, then return the list. You can follow it line by line like a recipe.
+
+The stream version (`searchByLevelUsingStream`) does the same thing in fewer lines, but it hides those steps behind method calls (`filter`, `toList`). It's faster to write and read once you already know what `filter` and `toList` do, but it's harder to follow if you're new to streams, since there's no visible loop or list-building happening.
+
+### Question: What does `filter()` do in a stream?
+
+`filter()` goes through each item in the stream and keeps only the ones that match a condition (a boolean test) you give it - any item where the condition is `false` gets dropped from the stream. It's basically the stream version of the `if` check inside a loop: in `searchByLevelUsingLoop`, the `if (course.getLevel().equalsIgnoreCase(safeLevel))` check is doing the exact same job that `.filter(course -> course.getLevel().equalsIgnoreCase(safeLevel))` does in the stream version.
+
+Before submitting, check:
+
+- [/] `searchByLevelUsingLoop()` is added to `CourseService`.
+- [/] The method uses `ArrayList`.
+- [/] The method uses a normal `for` loop.
+- [/] The method handles `null` safely.
+- [/] The demo class creates at least four courses.
+- [/] The demo class prints only matching courses.
+- [/] Code compiles and runs.
