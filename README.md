@@ -145,3 +145,21 @@ Before submitting, check:
 - [/] Handled `C999` using `try/catch`.
 - [/] Handled another missing course ID using `try/catch`.
 - [/] Program does not crash.
+
+## Day 3 Exercise 04 - Object Relationships and Composition
+
+### Question: Why is `CourseOffering` a better design than putting start date, end date, and capacity directly inside `Course`?
+
+A `Course` is a template - e.g. "Java Fundamentals" - and that template doesn't change no matter how many times it runs. But in real life, the same course gets taught over and over with different dates, instructors, and capacities (see `OFF001` and `OFF003` both reusing the same `javaCourse` object). If start date, end date, and capacity lived inside `Course`, the course could only ever represent one single run at a time - we couldn't show two intakes happening in different months without making duplicate `Course` objects with the same title.
+
+`CourseOffering` keeps "what is taught" (`Course`) separate from "when/how/by whom it's delivered" (the offering), which is exactly composition: `CourseOffering` *has a* `Course` and *has an* `Instructor` instead of repeating their data as plain text fields. That means students enroll in a specific offering (with its own seats and schedule), while the underlying course stays a single reusable definition.
+
+Before submitting, check:
+
+- [/] Created two instructors.
+- [/] Created two courses.
+- [/] Assigned instructors to courses.
+- [/] Created two course offerings.
+- [/] Printed all course offerings.
+- [/] Code comments explain composition.
+- [/] Code compiles and runs.
