@@ -185,3 +185,28 @@ Before submitting, check:
 - [/] The demo class creates at least four courses.
 - [/] The demo class prints only matching courses.
 - [/] Code compiles and runs.
+
+## Day 3 Exercise 06 - Build StudentService Using the Same Pattern as CourseService
+
+### Question: How is `StudentService` similar to `CourseService`?
+
+They follow the exact same structure: a constructor that receives a repository interface (`StudentRepository` / `CourseRepository`), a "register/create" method that checks for null and duplicates before saving, a `getXById()` method that uses `findById(...).orElseThrow(...)` to throw a custom not-found exception, a `getAllX()` method that just delegates to `findAll()`, and a `searchByXUsingLoop()` method that builds an `ArrayList` and filters with a plain `for` loop. Neither service stores data itself - both just coordinate validation and delegate storage to their repository.
+
+### Question: Which file stores students temporarily while the program is running?
+
+`InMemoryStudentRepository.java` - specifically the `Map<String, Student> students = new LinkedHashMap<>()` field inside it. Just like `InMemoryCourseRepository`, it only lives in memory, so all registered students disappear once the program stops.
+
+Before submitting, check:
+
+- [/] `StudentRepository.java` created.
+- [/] `InMemoryStudentRepository.java` created.
+- [/] `StudentNotFoundException.java` created.
+- [/] `StudentService.java` created.
+- [/] Demo class created.
+- [/] At least 3 students are registered.
+- [/] `getStudentById()` works for existing student.
+- [/] Missing student is handled using exception.
+- [/] Search by name works using loop.
+- [/] Code compiles and runs.
+- [/] Extension: `DuplicateStudentException` created and used in `registerStudent()`.
+- [/] Extension: `searchByNameUsingStream()` added.
