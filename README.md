@@ -123,3 +123,25 @@ Before submitting, check:
 - [/] Used `Optional<Course>` when finding by ID.
 - [/] Used `existsById()`.
 - [/] Code compiles and runs.
+
+## Day 3 Exercise 03 - Exception Practice with CourseService
+
+### Question: Why is throwing `CourseNotFoundException` better than printing inside `CourseService`?
+
+If `CourseService` printed `"Course not found"` directly, that decision would be baked into the service forever - every caller would be stuck with a console message whether it wanted one or not. By throwing `CourseNotFoundException` instead, the service just reports that something went wrong and lets the **caller** decide how to present it:
+
+- A console app (like `ExceptionPractice.java`) can catch it and print a friendly line.
+- A Spring Boot REST controller can catch it and return a `404 Not Found` JSON response.
+- A React frontend can catch the API error and show a toast or inline message in the UI.
+
+One exception, three completely different presentations - none of which `CourseService` needs to know or care about. That separation is also what keeps the service testable: a unit test can assert that the exception was thrown without parsing console output.
+
+Before submitting, check:
+
+- [/] `ExceptionPractice.java` exists.
+- [/] Created `CourseService` correctly.
+- [/] Added at least two courses.
+- [/] Successfully printed one existing course.
+- [/] Handled `C999` using `try/catch`.
+- [/] Handled another missing course ID using `try/catch`.
+- [/] Program does not crash.
