@@ -105,3 +105,21 @@ Before submitting, check:
 - [/] Course details are printed.
 - [/] Code contains trace comments explaining the flow.
 - [/] Code compiles and runs.
+
+## Day 3 Exercise 02 - Interface and Repository Storage Practice
+
+### Question: Why is `InMemoryCourseRepository` temporary storage? What would probably replace it later when we use MongoDB?
+
+`InMemoryCourseRepository` stores everything in a `LinkedHashMap` that lives only in the JVM's memory. As soon as the program stops running, the map and every course inside it are gone - nothing is written to disk, so there is no persistence across restarts. It's also single-instance only: it can't be shared across multiple servers.
+
+Because the rest of the code talks to `CourseRepository` (the interface), not `InMemoryCourseRepository` (the class) directly, swapping the storage later is just a matter of writing a new implementation - e.g. `MongoCourseRepository` - that implements the same `save`, `findById`, `findAll`, `deleteById`, and `existsById` methods but backs them with real MongoDB collection calls (`insertOne`, `find`, etc.) instead of a `Map`. `CourseService` and the demo classes wouldn't need to change at all, since they only depend on the `CourseRepository` interface.
+
+Before submitting, check:
+
+- [/] `RepositoryPractice.java` exists.
+- [/] Used `CourseRepository courseRepository = new InMemoryCourseRepository();`.
+- [/] Saved at least three courses through the repository.
+- [/] Printed all courses using a loop.
+- [/] Used `Optional<Course>` when finding by ID.
+- [/] Used `existsById()`.
+- [/] Code compiles and runs.
