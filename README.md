@@ -87,3 +87,21 @@ Before submitting, check:
 - [/] Program runs successfully.
 - [/] Code has been committed and pushed to GitHub.
 - [/] README reflection is completed.
+
+## Day 3 Exercise 01 - Build and Trace the Code Flow
+
+### Question: When `getCourseById("C004")` is called, which file does the request go to first, second, and third?
+
+1. **First** - `CodeFlowPractice.java` (the demo class): it calls `courseService.getCourseById("C004")`.
+2. **Second** - `CourseService.java`: its `getCourseById` method receives the call and delegates to `courseRepository.findById("C004")`.
+3. **Third** - `InMemoryCourseRepository.java`: its `findById` method looks up the course in the underlying `LinkedHashMap` and returns an `Optional<Course>`, which `CourseService` unwraps (or throws `CourseNotFoundException` if empty) before returning the `Course` back up to the demo class.
+
+Before submitting, check:
+
+- [/] `CodeFlowPractice.java` exists.
+- [/] Repository and service are created correctly.
+- [/] Course `C004` is created through `CourseService`.
+- [/] Course `C004` is retrieved through `CourseService`.
+- [/] Course details are printed.
+- [/] Code contains trace comments explaining the flow.
+- [/] Code compiles and runs.
