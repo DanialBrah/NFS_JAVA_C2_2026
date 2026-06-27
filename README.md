@@ -210,3 +210,9 @@ Before submitting, check:
 - [/] Code compiles and runs.
 - [/] Extension: `DuplicateStudentException` created and used in `registerStudent()`.
 - [/] Extension: `searchByNameUsingStream()` added.
+
+## Day 4 Exercise 01 - Create a JavaScript Student Object
+
+### Question: What is one difference between a Java object and a JavaScript object?
+
+A Java object always comes from a class - `Student` has fixed fields (`studentId`, `name`, `email`...) declared ahead of time, and you can only set or read them through the constructor and the getters/setters the class defines. A JavaScript object like `student` is just a plain `{}` literal: properties can be added, renamed, or removed at runtime, there's no compile-time check that `studentId` even exists, and you can read the same value with either dot notation (`student.studentId`) or bracket notation (`student["studentId"]`).
