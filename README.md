@@ -250,3 +250,9 @@ The element that was removed (the last item in the array), or `undefined` if the
 ### 5. What is the difference between shift and unshift?
 
 `shift` removes the **first** element from the array and returns that removed element. `unshift` adds one or more new elements to the **beginning** of the array and returns the new length - they act on the same end of the array but in opposite directions (remove vs. add).
+
+## Day 4 Exercise 05 - Render Student Cards in HTML
+
+### Question: What does the DOM allow JavaScript to do?
+
+The DOM (Document Object Model) is the browser's live, in-memory representation of the HTML page as a tree of objects - it's what lets JavaScript reach into a page and read or change what's actually on screen *after* the page has loaded, instead of only being able to print to a console. In `script.js`, `document.getElementById("student-list")` grabs an existing element from that tree, `document.createElement("div")` builds a brand new node that doesn't exist in the original HTML yet, and `appendChild` inserts it into the page so the browser re-renders it visually. Without the DOM, JavaScript would have no way to turn an array of student objects into visible content - it's the bridge between data in a script and pixels in the browser.
