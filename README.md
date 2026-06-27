@@ -262,3 +262,25 @@ The DOM (Document Object Model) is the browser's live, in-memory representation 
 ### Question: How is JavaScript filter used in a search feature?
 
 `filter` is exactly what a "live search" needs because it doesn't remove anything from the original data - it reads the full `students` array and returns a brand new array containing only the elements that match a condition, leaving `students` itself untouched so you can search again later without having lost any records. In `script.js`, clicking Search reads the typed keyword, lowercases it, and runs `students.filter((student) => student.studentName.toLowerCase().includes(keyword))` - each student is kept only if their name contains that keyword. That filtered array (which could even be empty) is then handed to `renderStudents()`, which redraws the cards from scratch - so the UI always reflects whatever subset `filter` just produced, and clicking Reset simply calls `renderStudents(students)` again with the untouched original array.
+
+## Day 4 Exercise 07 - Load Students from a JSON File Using Fetch
+
+### 1. What does async mean?
+
+It marks a function as one that's allowed to pause and wait for something slow (like a network request) without blocking the rest of the page. An `async` function always returns a Promise under the hood, and only inside an `async` function can you use the `await` keyword.
+
+### 2. What does await do?
+
+It pauses execution of the `async` function on that line until the Promise it's waiting on settles, then unwraps the result so you can use it as a normal value on the next line - e.g. `const response = await fetch("students.json")` waits for the network request to finish before `response` is usable, instead of immediately moving on with a pending Promise.
+
+### 3. What does fetch do?
+
+It sends a request to get data from a URL or file path and returns a Promise that resolves to a `Response` object once the server (or, here, Live Server) responds. The response itself is just headers/status at that point - you still need a second step like `response.json()` to actually read and parse the body.
+
+### 4. Why do we use fetch before connecting to a real backend API?
+
+Loading `students.json` with `fetch("students.json")` exercises the exact same pattern - request, await, check `response.ok`, parse the body, handle errors with try/catch - that we'll use later with `fetch("http://localhost:8080/api/students")` against a real Spring Boot endpoint. Practicing it against a static file removes the variables of a real backend (server running, CORS, network failures) while still teaching the asynchronous flow, so by the time we connect to an actual API the syntax is already familiar and we can focus on the backend-specific parts.
+
+### 5. Why should this exercise be run using Live Server?
+
+Opening `index.html` by double-clicking it loads the page over the `file://` protocol, and browsers block `fetch()` from reading local files under `file://` for security reasons (no proper origin to apply CORS rules to) - the request either fails outright or gets blocked depending on the browser. Live Server serves the folder over real `http://`, giving the page an actual origin that `fetch("students.json")` is allowed to request from, which is exactly the same origin-based model a real backend API would use.
