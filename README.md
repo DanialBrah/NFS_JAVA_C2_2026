@@ -222,3 +222,9 @@ A Java object always comes from a class - `Student` has fixed fields (`studentId
 ### Question: How is a JavaScript array similar to Java ArrayList?
 
 Both are dynamic, ordered collections that grow or shrink at runtime instead of needing a fixed size up front - you just call `.push()` on a JS array the same way you'd call `.add()` on an `ArrayList`. Both support iterating with a `for...of`/for-each style loop, and both give you a `.length`/`.size()` to know how many elements are stored. The difference is typing: an `ArrayList<Instructor>` only ever holds `Instructor` objects (checked at compile time), while a plain JS array like `instructors` could technically hold a mix of types since JavaScript doesn't enforce element types.
+
+## Day 4 Exercise 03 - Write Functions and Arrow Functions for Student Data
+
+### Question: Why are arrow functions important before learning React?
+
+React components are themselves just functions, and almost every event handler, `.map()` callback, or `useEffect` you write in React is passed around as a value - arrow functions are the natural syntax for that because they're short expressions you can inline directly into JSX (e.g. `onClick={() => doSomething(student)}`). Just as importantly, arrow functions don't rebind `this` the way normal functions do, which avoids a whole class of "this is undefined" bugs that used to plague callback-heavy code before arrow functions existed. Getting comfortable writing `(student) => student.status`-style functions now means React's component and callback syntax won't feel like new material later - it's the same skill applied to JSX instead of plain objects.
