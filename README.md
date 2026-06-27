@@ -228,3 +228,25 @@ Both are dynamic, ordered collections that grow or shrink at runtime instead of 
 ### Question: Why are arrow functions important before learning React?
 
 React components are themselves just functions, and almost every event handler, `.map()` callback, or `useEffect` you write in React is passed around as a value - arrow functions are the natural syntax for that because they're short expressions you can inline directly into JSX (e.g. `onClick={() => doSomething(student)}`). Just as importantly, arrow functions don't rebind `this` the way normal functions do, which avoids a whole class of "this is undefined" bugs that used to plague callback-heavy code before arrow functions existed. Getting comfortable writing `(student) => student.status`-style functions now means React's component and callback syntax won't feel like new material later - it's the same skill applied to JSX instead of plain objects.
+
+## Day 4 Exercise 04 - Practise JavaScript Array Methods
+
+### 1. What is the difference between filter, find, and map?
+
+`filter` returns a **new array** containing every element that matches a condition (zero, one, or many). `find` returns just the **first matching element itself** (not wrapped in an array), or `undefined` if nothing matches. `map` doesn't filter anything - it returns a new array of the **same length** as the original, with every element transformed into something else (e.g. turning student objects into a list of email strings).
+
+### 2. Which four array methods change the original array?
+
+`push`, `pop`, `shift`, and `unshift`. `forEach`, `filter`, `find`, and `map` all leave the original array untouched.
+
+### 3. What does push return?
+
+The new length of the array after the item was added.
+
+### 4. What does pop return?
+
+The element that was removed (the last item in the array), or `undefined` if the array was already empty.
+
+### 5. What is the difference between shift and unshift?
+
+`shift` removes the **first** element from the array and returns that removed element. `unshift` adds one or more new elements to the **beginning** of the array and returns the new length - they act on the same end of the array but in opposite directions (remove vs. add).

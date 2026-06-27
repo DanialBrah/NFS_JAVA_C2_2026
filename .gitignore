@@ -57,3 +57,5 @@ build/
 .ps1
 
 .env
+
+/notes
