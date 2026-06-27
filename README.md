@@ -256,3 +256,9 @@ The element that was removed (the last item in the array), or `undefined` if the
 ### Question: What does the DOM allow JavaScript to do?
 
 The DOM (Document Object Model) is the browser's live, in-memory representation of the HTML page as a tree of objects - it's what lets JavaScript reach into a page and read or change what's actually on screen *after* the page has loaded, instead of only being able to print to a console. In `script.js`, `document.getElementById("student-list")` grabs an existing element from that tree, `document.createElement("div")` builds a brand new node that doesn't exist in the original HTML yet, and `appendChild` inserts it into the page so the browser re-renders it visually. Without the DOM, JavaScript would have no way to turn an array of student objects into visible content - it's the bridge between data in a script and pixels in the browser.
+
+## Day 4 Exercise 06 - Add Search to the Student List
+
+### Question: How is JavaScript filter used in a search feature?
+
+`filter` is exactly what a "live search" needs because it doesn't remove anything from the original data - it reads the full `students` array and returns a brand new array containing only the elements that match a condition, leaving `students` itself untouched so you can search again later without having lost any records. In `script.js`, clicking Search reads the typed keyword, lowercases it, and runs `students.filter((student) => student.studentName.toLowerCase().includes(keyword))` - each student is kept only if their name contains that keyword. That filtered array (which could even be empty) is then handed to `renderStudents()`, which redraws the cards from scratch - so the UI always reflects whatever subset `filter` just produced, and clicking Reset simply calls `renderStudents(students)` again with the untouched original array.
