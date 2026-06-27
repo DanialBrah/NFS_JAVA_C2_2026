@@ -216,3 +216,9 @@ Before submitting, check:
 ### Question: What is one difference between a Java object and a JavaScript object?
 
 A Java object always comes from a class - `Student` has fixed fields (`studentId`, `name`, `email`...) declared ahead of time, and you can only set or read them through the constructor and the getters/setters the class defines. A JavaScript object like `student` is just a plain `{}` literal: properties can be added, renamed, or removed at runtime, there's no compile-time check that `studentId` even exists, and you can read the same value with either dot notation (`student.studentId`) or bracket notation (`student["studentId"]`).
+
+## Day 4 Exercise 02 - Store Instructors in an Array and Loop Through Them
+
+### Question: How is a JavaScript array similar to Java ArrayList?
+
+Both are dynamic, ordered collections that grow or shrink at runtime instead of needing a fixed size up front - you just call `.push()` on a JS array the same way you'd call `.add()` on an `ArrayList`. Both support iterating with a `for...of`/for-each style loop, and both give you a `.length`/`.size()` to know how many elements are stored. The difference is typing: an `ArrayList<Instructor>` only ever holds `Instructor` objects (checked at compile time), while a plain JS array like `instructors` could technically hold a mix of types since JavaScript doesn't enforce element types.
