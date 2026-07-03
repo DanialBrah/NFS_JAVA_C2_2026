@@ -36,3 +36,71 @@ Content-Type: application/json
   "startDate": "",
   "capacity": 0
 }
+
+
+### 7. Get all bookings, 200 means success, empty array if none yet
+GET http://localhost:8081/api/bookings
+
+
+### 8. Create a valid booking 201 means successful creation, and reduces the event's availableSeats
+POST http://localhost:8081/api/bookings
+Content-Type: application/json
+
+{
+  "eventId": "EV001",
+  "participantName": "Rahim Gonzalez",
+  "participantEmail": "rahim@example.com",
+  "seats": 2
+}
+
+
+### 9. Get one booking by ID, 200 means found
+GET http://localhost:8081/api/bookings/BK001
+
+
+### 10. Get a booking that doesn't exist, 404 means not found
+GET http://localhost:8081/api/bookings/BK999
+
+
+### 11. Create a booking with missing fields, 400 means validation failed
+POST http://localhost:8081/api/bookings
+Content-Type: application/json
+
+{
+  "eventId": "",
+  "participantName": "",
+  "participantEmail": "",
+  "seats": 0
+}
+
+
+### 12. Create a booking with an invalid event ID, 404 means the referenced event doesn't exist
+POST http://localhost:8081/api/bookings
+Content-Type: application/json
+
+{
+  "eventId": "EV999",
+  "participantName": "Rahim Gonzalez",
+  "participantEmail": "rahim@example.com",
+  "seats": 2
+}
+
+
+### 13. Create a booking with too many seats, 400 means not enough seats available
+POST http://localhost:8081/api/bookings
+Content-Type: application/json
+
+{
+  "eventId": "EV002",
+  "participantName": "Rahim Gonzalez",
+  "participantEmail": "rahim@example.com",
+  "seats": 100
+}
+
+
+### 14. Cancel a booking (optional task), 200 means the booking status changed to CANCELLED and seats were returned to the event
+DELETE http://localhost:8081/api/bookings/BK001
+
+
+### 15. Cancel an already-cancelled booking, 409 means conflict with current booking state
+DELETE http://localhost:8081/api/bookings/BK001

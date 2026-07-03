@@ -1,6 +1,8 @@
 const http = require("http");
 
 const PORT = 8081;
+let bookings = [];
+
 let events = [
     {
         id: "EV001",
@@ -71,7 +73,7 @@ let instructors = [
 function corsHeaders() {
     return {
         "Access-Control-Allow-Origin": "*",
-        "Access-Control-Allow-Methods": "GET,POST,OPTIONS",
+        "Access-Control-Allow-Methods": "GET,POST,DELETE,OPTIONS",
         "Access-Control-Allow-Headers": "Content-Type",
         "Content-Type": "application/json"
     };
@@ -121,6 +123,28 @@ function validateCourseOffering(payload) {
 
     if (!Number.isInteger(payload.capacity) || payload.capacity < 1) {
         errors.push({ field: "capacity", message: "Capacity must be a whole number greater than 0" });
+    }
+
+    return errors;
+}
+
+function validateBooking(payload) {
+    const errors = [];
+
+    if (!payload.eventId || payload.eventId.trim() === "") {
+        errors.push({ field: "eventId", message: "Event ID is required" });
+    }
+
+    if (!payload.participantName || payload.participantName.trim() === "") {
+        errors.push({ field: "participantName", message: "Participant name is required" });
+    }
+
+    if (!payload.participantEmail || payload.participantEmail.trim() === "") {
+        errors.push({ field: "participantEmail", message: "Participant email is required" });
+    }
+
+    if (!Number.isInteger(payload.seats) || payload.seats < 1) {
+        errors.push({ field: "seats", message: "Seats must be a whole number greater than 0" });
     }
 
     return errors;
@@ -237,6 +261,88 @@ const server = http.createServer(async (request, response) => {
             if (!found) {
                 sendJson(response, 404, { message: `Instructor ${id} was not found` });
                 return;
+            }
+
+            sendJson(response, 200, found);
+            return;
+        }
+
+        if (method === "GET" && url.pathname === "/api/bookings") {
+            sendJson(response, 200, bookings);
+            return;
+        }
+
+        const bookingMatch = url.pathname.match(/^\/api\/bookings\/([^/]+)$/);
+
+        if (method === "GET" && bookingMatch) {
+            const id = bookingMatch[1];
+            const found = bookings.find(item => item.id === id);
+
+            if (!found) {
+                sendJson(response, 404, { message: `Booking ${id} was not found` });
+                return;
+            }
+
+            sendJson(response, 200, found);
+            return;
+        }
+
+        if (method === "POST" && url.pathname === "/api/bookings") {
+            const payload = await readJsonBody(request);
+            const errors = validateBooking(payload);
+
+            if (errors.length > 0) {
+                sendJson(response, 400, { message: "Validation failed", errors });
+                return;
+            }
+
+            const event = events.find(item => item.id === payload.eventId);
+
+            if (!event) {
+                sendJson(response, 404, { message: `Event ${payload.eventId} was not found` });
+                return;
+            }
+
+            if (payload.seats > event.availableSeats) {
+                sendJson(response, 400, { message: "Not enough seats available" });
+                return;
+            }
+
+            const created = {
+                id: createId("BK", bookings.length),
+                eventId: event.id,
+                participantName: payload.participantName.trim(),
+                participantEmail: payload.participantEmail.trim(),
+                seats: payload.seats,
+                status: "CONFIRMED"
+            };
+
+            event.availableSeats -= payload.seats;
+            bookings.push(created);
+            sendJson(response, 201, created);
+            return;
+        }
+
+        if (method === "DELETE" && bookingMatch) {
+            const id = bookingMatch[1];
+            const found = bookings.find(item => item.id === id);
+
+            if (!found) {
+                sendJson(response, 404, { message: `Booking ${id} was not found` });
+                return;
+            }
+
+            if (found.status === "CANCELLED") {
+                sendJson(response, 409, { message: `Booking ${id} is already cancelled` });
+                return;
+            }
+
+            found.status = "CANCELLED";
+
+            const relatedEvent = events.find(item => item.id === found.eventId);
+
+            if (relatedEvent) {
+                relatedEvent.availableSeats += found.seats;
             }
 
             sendJson(response, 200, found);
