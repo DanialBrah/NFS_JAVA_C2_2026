@@ -1,115 +1,82 @@
 const API_BASE_URL = "http://localhost:8081/api";
 
-const loadButton = document.querySelector("#loadButton");
-const statusText = document.querySelector("#statusText");
-const eventList = document.querySelector("#eventList");
+const loadButton = document.getElementById("loadButton");
+const statusText = document.getElementById("statusText");
+const eventList = document.getElementById("eventList");
 
-function showStatus(message) {
-    statusText.textContent = message;
-}
-
-function formatEvent(event) {
-    return `${event.title} - ${event.date} - ${event.venue} - ${event.availableSeats} seats available`;
-}
-
-function renderEvents(events) {
-    eventList.innerHTML = "";
-
-    events.forEach(event => {
-        const listItem = document.createElement("li");
-        listItem.textContent = formatEvent(event);
-        eventList.appendChild(listItem);
-    });
-}
-
-function renderSingleEvent(event) {
-    eventList.innerHTML = "";
-
-    const listItem = document.createElement("li");
-    listItem.textContent = formatEvent(event);
-
-    eventList.appendChild(listItem);
-}
+loadButton.addEventListener("click", loadEvents);
 
 async function loadEvents() {
-    showStatus("Loading events...");
+    statusText.textContent = "Loading events...";
+    eventList.innerHTML = "";
 
     try {
         const response = await fetch(`${API_BASE_URL}/events`);
 
-        console.log("GET /events status:", response.status);
-
         if (!response.ok) {
-            throw new Error(`Request failed with status ${response.status}`);
+            throw new Error(`Server responded with status ${response.status}`);
         }
 
-        const data = await response.json();
-
-        renderEvents(data);
-        showStatus(`Loaded ${data.length} event(s).`);
+        const events = await response.json();
+        renderEvents(events);
+        statusText.textContent = `${events.length} event(s) loaded.`;
     } catch (error) {
-        showStatus(error.message);
+        statusText.textContent = `Could not load events: ${error.message}`;
     }
 }
 
-async function searchEventById(event) {
-    event.preventDefault();
+function renderEvents(events) {
+    events.forEach(event => {
+        const listItem = document.createElement("li");
+        listItem.textContent = `${event.title} - ${event.date} - ${event.venue} - ${event.availableSeats} seats available`;
+        eventList.appendChild(listItem);
+    });
+}
 
-    const eventId = document.querySelector("#eventIdInput").value.trim();
+// Challenge task: search for one event by ID
+const searchInput = document.createElement("input");
+searchInput.type = "text";
+searchInput.id = "eventIdInput";
+searchInput.placeholder = "Enter event ID, e.g. EV001";
 
-    if (eventId === "") {
-        showStatus("Please enter an event ID.");
+const searchButton = document.createElement("button");
+searchButton.id = "searchButton";
+searchButton.textContent = "Find Event";
+
+const searchResult = document.createElement("p");
+searchResult.id = "searchResult";
+
+document.body.appendChild(searchInput);
+document.body.appendChild(searchButton);
+document.body.appendChild(searchResult);
+
+searchButton.addEventListener("click", searchEventById);
+
+async function searchEventById() {
+    const id = searchInput.value.trim();
+
+    if (id === "") {
+        searchResult.textContent = "Please enter an event ID.";
         return;
     }
 
-    showStatus(`Searching for event ${eventId}...`);
+    searchResult.textContent = "Searching...";
 
     try {
-        const response = await fetch(`${API_BASE_URL}/events/${eventId}`);
+        const response = await fetch(`${API_BASE_URL}/events/${id}`);
 
-        console.log("GET /events/{id} status:", response.status);
-
-        const data = await response.json();
-
-        if (!response.ok) {
-            showStatus(data.message);
-            eventList.innerHTML = "";
+        if (response.status === 404) {
+            searchResult.textContent = `No event found with ID ${id}.`;
             return;
         }
 
-        renderSingleEvent(data);
-        showStatus(`Event ${data.id} loaded.`);
+        if (!response.ok) {
+            throw new Error(`Server responded with status ${response.status}`);
+        }
+
+        const event = await response.json();
+        searchResult.textContent = `${event.title} - ${event.date} - ${event.venue} - ${event.availableSeats} seats available`;
     } catch (error) {
-        showStatus(error.message);
+        searchResult.textContent = `Search failed: ${error.message}`;
     }
 }
-
-function createSearchForm() {
-    const searchForm = document.createElement("form");
-    searchForm.id = "searchForm";
-
-    const label = document.createElement("label");
-    label.setAttribute("for", "eventIdInput");
-    label.textContent = "Search Event by ID: ";
-
-    const input = document.createElement("input");
-    input.id = "eventIdInput";
-    input.name = "eventIdInput";
-    input.type = "text";
-    input.placeholder = "Example: EV001";
-
-    const button = document.createElement("button");
-    button.type = "submit";
-    button.textContent = "Search";
-
-    searchForm.appendChild(label);
-    searchForm.appendChild(input);
-    searchForm.appendChild(button);
-
-    eventList.before(searchForm);
-
-    searchForm.addEventListener("submit", searchEventById);
-}
-
-loadButton.addEventListener("click", loadEvents);
-createSearchForm();
