@@ -3,3 +3,6 @@ GET http://localhost:8081/api/health
 
 ### About info
 GET http://localhost:8081/api/about
+
+### List tickets
+GET http://localhost:8081/api/tickets

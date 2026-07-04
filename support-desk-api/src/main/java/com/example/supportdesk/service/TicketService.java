@@ -1,0 +1,51 @@
+package com.example.supportdesk.service;
+
+import java.util.ArrayList;
+import java.util.List;
+
+import com.example.supportdesk.dto.TicketResponse;
+import org.springframework.stereotype.Service;
+
+@Service
+public class TicketService {
+    private final List<TicketResponse> tickets = new ArrayList<>();
+
+    public TicketService() {
+        tickets.add(new TicketResponse(
+            "T001",
+            "Cannot access email",
+            "User cannot login to company email account.",
+            "Email",
+            "HIGH",
+            "OPEN",
+            "amir@example.com",
+            "2026-07-03"
+        ));
+
+        tickets.add(new TicketResponse(
+            "T002",
+            "Laptop is slow",
+            "Laptop takes a long time to boot up and open applications.",
+            "Hardware",
+            "MEDIUM",
+            "OPEN",
+            "siti@example.com",
+            "2026-07-03"
+        ));
+
+        tickets.add(new TicketResponse(
+            "T003",
+            "VPN connection not working",
+            "User is unable to connect to the company VPN from home.",
+            "Network",
+            "HIGH",
+            "IN_PROGRESS",
+            "farid@example.com",
+            "2026-07-04"
+        ));
+    }
+
+    public List<TicketResponse> getAllTickets() {
+        return tickets;
+    }
+}
