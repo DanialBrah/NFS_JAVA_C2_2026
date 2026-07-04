@@ -225,3 +225,5 @@ private-notes/
 out/
 .generated/
 generated/
+
+/note
