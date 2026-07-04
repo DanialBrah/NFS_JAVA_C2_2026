@@ -1,0 +1,38 @@
+### Health check
+GET http://localhost:8081/api/health
+
+### About check
+GET http://localhost:8081/api/about
+
+### GET all tickets
+GET http://localhost:8081/api/tickets
+
+### Get one ticket
+GET http://localhost:8081/api/tickets/T001
+
+### Get one ticket that doesn't exist
+GET http://localhost:8081/api/tickets/T999
+
+### Create a valid ticket
+POST http://localhost:8081/api/tickets
+Content-Type: application/json
+
+{
+  "title": "VPN connection not working",
+  "description": "User cannot connect to company VPN from home.",
+  "category": "Network",
+  "priority": "MEDIUM",
+  "createdBy": "siti@example.com"
+}
+
+### Create an invalid ticket
+POST http://localhost:8081/api/tickets
+Content-Type: application/json
+
+{
+  "title": "",
+  "description": "",
+  "category": "",
+  "priority": "",
+  "createdBy": ""
+}
