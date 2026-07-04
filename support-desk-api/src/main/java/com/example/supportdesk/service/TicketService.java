@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import com.example.supportdesk.dto.TicketResponse;
+import com.example.supportdesk.exception.ResourceNotFoundException;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -47,5 +48,12 @@ public class TicketService {
 
     public List<TicketResponse> getAllTickets() {
         return tickets;
+    }
+
+    public TicketResponse getTicketById(String id) {
+        return tickets.stream()
+                .filter(ticket -> ticket.getId().equalsIgnoreCase(id))
+                .findFirst()
+                .orElseThrow(() -> new ResourceNotFoundException("Ticket " + id + " was not found"));
     }
 }
