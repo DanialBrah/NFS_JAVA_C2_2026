@@ -4,8 +4,34 @@ GET http://localhost:8080/api/tickets
 
 ### Get one ticket
 # Replace the ID below with an actual ID returned by GET /api/tickets
-GET http://localhost:8080/api/tickets/REPLACE_WITH_REAL_ID
+GET http://localhost:8080/api/tickets/6a506467f676e8df60509af3
 
 
 ### Get missing ticket
 GET http://localhost:8080/api/tickets/000000000000000000000000
+
+
+### Create a valid ticket
+POST http://localhost:8080/api/tickets
+Content-Type: application/json
+
+{
+  "title": "Cannot access email2",
+  "description": "User cannot login to company email account.",
+  "category": "Email",
+  "priority": "HIGH",
+  "createdBy": "amir@example.com"
+}
+
+
+### Create an invalid ticket
+POST http://localhost:8080/api/tickets
+Content-Type: application/json
+
+{
+  "title": "",
+  "description": "",
+  "category": "",
+  "priority": "",
+  "createdBy": ""
+}
