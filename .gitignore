@@ -226,3 +226,5 @@ out/
 .generated/
 generated/
 .java-version # jenv
+
+/note
