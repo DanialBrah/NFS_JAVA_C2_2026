@@ -4,6 +4,10 @@ import java.time.LocalDate;
 import java.time.ZoneId;
 import java.util.List;
 
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 import com.example.supportdesk.dto.CreateTicketRequest;
@@ -37,6 +41,17 @@ public class TicketService {
         return tickets.stream()
                 .map(this::toResponse)
                 .toList();
+    }
+
+    public Page<TicketResponse> getTicketsPaged(int page, int size, String sortBy, String direction) {
+        Sort sort = direction.equalsIgnoreCase("desc")
+                ? Sort.by(sortBy).descending()
+                : Sort.by(sortBy).ascending();
+
+        Pageable pageable = PageRequest.of(page, size, sort);
+
+        return ticketRepository.findAll(pageable)
+                .map(this::toResponse);
     }
 
     public TicketResponse getTicketById(String id) {
