@@ -61,3 +61,23 @@ Content-Type: application/json
   "priority": "",
   "createdBy": ""
 }
+
+### === Day 8 Exercise 5: Query Behaviour and Troubleshooting ===
+
+### Test 1: Invalid status value
+GET http://localhost:8081/api/tickets?status=INVALID
+
+### Test 2: Invalid priority value
+GET http://localhost:8081/api/tickets?priority=URGENT
+
+### Test 3: Page number with no records
+GET http://localhost:8081/api/tickets/paged?page=99&size=5
+
+### Test 4: Very large page size
+GET http://localhost:8081/api/tickets/paged?page=0&size=100
+
+### Test 5: Unknown sort field
+GET http://localhost:8081/api/tickets/paged?page=0&size=5&sortBy=unknownField&direction=asc
+
+### Test 6: Combined filters (status + priority)
+GET http://localhost:8081/api/tickets?status=OPEN&priority=HIGH
