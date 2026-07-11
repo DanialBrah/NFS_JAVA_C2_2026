@@ -16,6 +16,18 @@ GET http://localhost:8081/api/tickets?priority=HIGH
 ### Filter tickets by category
 GET http://localhost:8081/api/tickets?category=Email
 
+### Get paged tickets (defaults: page=0, size=5, sortBy=createdAt, direction=desc)
+GET http://localhost:8081/api/tickets/paged
+
+### Get paged tickets - page 0, size 2
+GET http://localhost:8081/api/tickets/paged?page=0&size=2
+
+### Get paged tickets - page 1, size 2
+GET http://localhost:8081/api/tickets/paged?page=1&size=2
+
+### Get paged tickets sorted by priority ascending
+GET http://localhost:8081/api/tickets/paged?page=0&size=5&sortBy=priority&direction=asc
+
 ### Get existing ticket
 # Replace the ID below with an actual ID returned by GET /api/tickets
 GET http://localhost:8081/api/tickets/REPLACE_WITH_REAL_ID
