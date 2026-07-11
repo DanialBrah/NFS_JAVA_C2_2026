@@ -1,0 +1,48 @@
+### Health check
+GET http://localhost:8081/api/health
+
+### About info
+GET http://localhost:8081/api/about
+
+### List tickets
+GET http://localhost:8081/api/tickets
+
+### Filter tickets by status
+GET http://localhost:8081/api/tickets?status=OPEN
+
+### Filter tickets by priority
+GET http://localhost:8081/api/tickets?priority=HIGH
+
+### Filter tickets by category
+GET http://localhost:8081/api/tickets?category=Email
+
+### Get existing ticket
+# Replace the ID below with an actual ID returned by GET /api/tickets
+GET http://localhost:8081/api/tickets/REPLACE_WITH_REAL_ID
+
+### Get missing ticket
+GET http://localhost:8081/api/tickets/000000000000000000000000
+
+### Create ticket (valid)
+POST http://localhost:8081/api/tickets
+Content-Type: application/json
+
+{
+  "title": "VPN connection not working",
+  "description": "User cannot connect to company VPN from home.",
+  "category": "Network",
+  "priority": "MEDIUM",
+  "createdBy": "siti@example.com"
+}
+
+### Create ticket (invalid)
+POST http://localhost:8081/api/tickets
+Content-Type: application/json
+
+{
+  "title": "",
+  "description": "",
+  "category": "",
+  "priority": "",
+  "createdBy": ""
+}
