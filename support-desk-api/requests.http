@@ -1,3 +1,43 @@
+### === Day 9 Exercise 2: Register and Login ===
+
+### Register success
+POST http://localhost:8081/api/auth/register
+Content-Type: application/json
+
+{
+  "name": "Siti Aminah",
+  "email": "siti@example.com",
+  "password": "password123"
+}
+
+### Login success
+POST http://localhost:8081/api/auth/login
+Content-Type: application/json
+
+{
+  "email": "siti@example.com",
+  "password": "password123"
+}
+
+### Duplicate email error (register with the same email again)
+POST http://localhost:8081/api/auth/register
+Content-Type: application/json
+
+{
+  "name": "Siti Aminah",
+  "email": "siti@example.com",
+  "password": "password123"
+}
+
+### Wrong password error
+POST http://localhost:8081/api/auth/login
+Content-Type: application/json
+
+{
+  "email": "siti@example.com",
+  "password": "wrongPassword"
+}
+
 ### Health check
 GET http://localhost:8081/api/health
 
