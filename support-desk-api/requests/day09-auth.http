@@ -1,0 +1,68 @@
+### Day 9 - Authentication Test Evidence
+
+### 1. Health endpoint is public -> expect 200
+GET http://localhost:8081/api/health
+
+### 2. Ticket endpoint without token -> expect 401
+GET http://localhost:8081/api/tickets
+
+### 3. Register user -> expect 201 with token
+POST http://localhost:8081/api/auth/register
+Content-Type: application/json
+
+{
+  "name": "Test User",
+  "email": "testuser09@example.com",
+  "password": "password123"
+}
+
+### 4. Login user -> expect 200 with token
+POST http://localhost:8081/api/auth/login
+Content-Type: application/json
+
+{
+  "email": "testuser09@example.com",
+  "password": "password123"
+}
+
+### 5. Ticket endpoint with USER token -> expect 200
+# Replace TOKEN with the token from request 4
+GET http://localhost:8081/api/tickets
+Authorization: Bearer TOKEN
+
+### 6. Create ticket with USER token -> expect 403
+# Replace TOKEN with the token from request 4
+POST http://localhost:8081/api/tickets
+Authorization: Bearer TOKEN
+Content-Type: application/json
+
+{
+  "title": "Printer not working",
+  "description": "Office printer on 3rd floor is jammed.",
+  "category": "Hardware",
+  "priority": "LOW",
+  "createdBy": "testuser09@example.com"
+}
+
+### 7. Login admin -> expect 200 with token
+POST http://localhost:8081/api/auth/login
+Content-Type: application/json
+
+{
+  "email": "admin@example.com",
+  "password": "Admin@12345"
+}
+
+### 8. Create ticket with ADMIN token -> expect 201
+# Replace TOKEN with the token from request 7
+POST http://localhost:8081/api/tickets
+Authorization: Bearer TOKEN
+Content-Type: application/json
+
+{
+  "title": "Printer not working",
+  "description": "Office printer on 3rd floor is jammed.",
+  "category": "Hardware",
+  "priority": "LOW",
+  "createdBy": "testuser09@example.com"
+}
