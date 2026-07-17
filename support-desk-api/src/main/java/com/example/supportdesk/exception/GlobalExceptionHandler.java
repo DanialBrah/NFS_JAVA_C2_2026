@@ -29,4 +29,16 @@ public class GlobalExceptionHandler {
 
         return new ApiErrorResponse("Validation failed: " + message);
     }
+
+    @ExceptionHandler(DuplicateEmailException.class)
+    @ResponseStatus(HttpStatus.CONFLICT)
+    public ApiErrorResponse handleDuplicateEmail(DuplicateEmailException exception) {
+        return new ApiErrorResponse(exception.getMessage());
+    }
+
+    @ExceptionHandler(InvalidCredentialsException.class)
+    @ResponseStatus(HttpStatus.UNAUTHORIZED)
+    public ApiErrorResponse handleInvalidCredentials(InvalidCredentialsException exception) {
+        return new ApiErrorResponse(exception.getMessage());
+    }
 }
