@@ -9,7 +9,7 @@ import com.example.supportdesk.model.AppUser;
 import com.example.supportdesk.repository.AppUserRepository;
 
 @Configuration
-public class AppUserDataSeeder {
+public class UserDataSeeder {
 
     @Bean
     CommandLineRunner seedAdminUser(AppUserRepository appUserRepository, PasswordEncoder passwordEncoder) {
@@ -19,9 +19,9 @@ public class AppUserDataSeeder {
             }
 
             appUserRepository.save(new AppUser(
-                    "Admin",
+                    "Admin User",
                     "admin@example.com",
-                    passwordEncoder.encode("admin12345"),
+                    passwordEncoder.encode("Admin@12345"),
                     "ADMIN"
             ));
         };
