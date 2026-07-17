@@ -38,6 +38,62 @@ Content-Type: application/json
   "password": "wrongPassword"
 }
 
+### === Day 9 Exercise 3: Protect Ticket Endpoints ===
+
+### Step 1: Login as the seeded admin (role=ADMIN) to get an admin token
+POST http://localhost:8081/api/auth/login
+Content-Type: application/json
+
+{
+  "email": "admin@example.com",
+  "password": "admin12345"
+}
+
+### Step 2: Login as the user registered in Exercise 2 (role=USER) to get a user token
+POST http://localhost:8081/api/auth/login
+Content-Type: application/json
+
+{
+  "email": "siti@example.com",
+  "password": "password123"
+}
+
+### Test 1: GET /api/tickets without token -> expect 401
+GET http://localhost:8081/api/tickets
+
+### Test 2: GET /api/tickets with USER token -> expect 200
+# Replace TOKEN with the token from Step 2
+GET http://localhost:8081/api/tickets
+Authorization: Bearer TOKEN
+
+### Test 3: POST /api/tickets with USER token -> expect 403
+# Replace TOKEN with the token from Step 2
+POST http://localhost:8081/api/tickets
+Authorization: Bearer TOKEN
+Content-Type: application/json
+
+{
+  "title": "Printer not working",
+  "description": "Office printer on 3rd floor is jammed.",
+  "category": "Hardware",
+  "priority": "LOW",
+  "createdBy": "siti@example.com"
+}
+
+### Test 4: POST /api/tickets with ADMIN token -> expect 201
+# Replace TOKEN with the token from Step 1
+POST http://localhost:8081/api/tickets
+Authorization: Bearer TOKEN
+Content-Type: application/json
+
+{
+  "title": "Printer not working",
+  "description": "Office printer on 3rd floor is jammed.",
+  "category": "Hardware",
+  "priority": "LOW",
+  "createdBy": "siti@example.com"
+}
+
 ### Health check
 GET http://localhost:8081/api/health
 
