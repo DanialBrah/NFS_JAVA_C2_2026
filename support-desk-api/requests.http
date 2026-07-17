@@ -46,7 +46,7 @@ Content-Type: application/json
 
 {
   "email": "admin@example.com",
-  "password": "admin12345"
+  "password": "Admin@12345"
 }
 
 ### Step 2: Login as the user registered in Exercise 2 (role=USER) to get a user token
