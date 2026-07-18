@@ -41,3 +41,13 @@ Content-Type: application/json
 # Replace TOKEN with the token from request 1
 GET http://localhost:8081/api/tickets
 Authorization: Bearer TOKEN
+
+### === Day 10 Exercise 2: Ticket Report by Status ===
+
+### 7. Report endpoint without token -> expect 401
+GET http://localhost:8081/api/v1/reports/tickets-by-status
+
+### 8. Report endpoint with USER token -> expect 200, grouped counts by status
+# Replace TOKEN with the token from request 1
+GET http://localhost:8081/api/v1/reports/tickets-by-status
+Authorization: Bearer TOKEN
