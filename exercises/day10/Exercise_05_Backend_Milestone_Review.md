@@ -11,23 +11,23 @@ Your task is to review your Support Desk Ticket API and prove that the backend i
 Tick each item once completed:
 
 ```text
-[ ] Project runs successfully
-[ ] MongoDB connection works
-[ ] Ticket model uses @Document and @Id
-[ ] TicketRepository extends MongoRepository
-[ ] Basic CRUD endpoints work
-[ ] Filtering works
-[ ] Pagination works
-[ ] Sorting works
-[ ] Duplicate or validation errors return clear responses
-[ ] Register endpoint works
-[ ] Login endpoint returns JWT
-[ ] Protected endpoints reject missing token
-[ ] Protected endpoints accept valid token
-[ ] Versioned /api/v1 routes exist
-[ ] Report endpoint works
-[ ] API documentation endpoint exists
-[ ] .http file contains test evidence
+[ ✅ ] Project runs successfully
+[ ✅ ] MongoDB connection works
+[ ✅ ] Ticket model uses @Document and @Id
+[ ✅ ] TicketRepository extends MongoRepository
+[ ✅ ] Basic CRUD endpoints work
+[ ✅ ] Filtering works
+[ ✅ ] Pagination works
+[ ✅ ] Sorting works
+[ ✅ ] Duplicate or validation errors return clear responses
+[ ✅ ] Register endpoint works
+[ ✅ ] Login endpoint returns JWT
+[ ✅ ] Protected endpoints reject missing token
+[ ✅ ] Protected endpoints accept valid token
+[ ✅ ] Versioned /api/v1 routes exist
+[ ✅ ] Report endpoint works
+[ ✅ ] API documentation endpoint exists
+[ ✅ ] .http file contains test evidence
 ```
 
 ## Submission
