@@ -1,0 +1,43 @@
+### Day 10 - API Versioning Test Evidence
+
+### 1. Login user -> expect 200 with token
+POST http://localhost:8081/api/auth/login
+Content-Type: application/json
+
+{
+  "email": "testuser09@example.com",
+  "password": "password123"
+}
+
+### 2. v1 ticket endpoint without token -> expect 401
+GET http://localhost:8081/api/v1/tickets
+
+### 3. v1 ticket endpoint with USER token -> expect 200
+# Replace TOKEN with the token from request 1
+GET http://localhost:8081/api/v1/tickets
+Authorization: Bearer TOKEN
+
+### 4. v1 get single ticket by id with USER token -> expect 200
+# Replace TOKEN with the token from request 1
+# Replace the id below with an actual id returned by request 3
+GET http://localhost:8081/api/v1/tickets/REPLACE_WITH_REAL_ID
+Authorization: Bearer TOKEN
+
+### 5. v1 create ticket with USER token -> expect 201
+# Replace TOKEN with the token from request 1
+POST http://localhost:8081/api/v1/tickets
+Authorization: Bearer TOKEN
+Content-Type: application/json
+
+{
+  "title": "Monitor flickering",
+  "description": "Second monitor flickers on startup.",
+  "category": "Hardware",
+  "priority": "LOW",
+  "createdBy": "testuser09@example.com"
+}
+
+### 6. Old /api/tickets endpoint still works with USER token -> expect 200
+# Replace TOKEN with the token from request 1
+GET http://localhost:8081/api/tickets
+Authorization: Bearer TOKEN
