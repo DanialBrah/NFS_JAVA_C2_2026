@@ -61,3 +61,8 @@ GET http://localhost:8081/api/v1/reports/tickets-by-priority
 # Replace TOKEN with the token from request 1
 GET http://localhost:8081/api/v1/reports/tickets-by-priority
 Authorization: Bearer TOKEN
+
+### === Day 10 Exercise 4: API Documentation Endpoint ===
+
+### 11. API docs endpoint, no token needed -> expect 200
+GET http://localhost:8081/api/docs
