@@ -19,10 +19,21 @@ public class TicketReportService {
         this.mongoTemplate = mongoTemplate;
     }
 
+    private static final String COUNT_FIELD = "count";
+    private static final String LABEL_FIELD = "label";
+
     public List<ReportCountResponse> getTicketCountsByStatus() {
+        return countGroupedBy("status");
+    }
+
+    public List<ReportCountResponse> countTicketsByPriority() {
+        return countGroupedBy("priority");
+    }
+
+    private List<ReportCountResponse> countGroupedBy(String field) {
         Aggregation aggregation = Aggregation.newAggregation(
-                Aggregation.group("status").count().as("count"),
-                Aggregation.project("count").and("_id").as("label")
+                Aggregation.group(field).count().as(COUNT_FIELD),
+                Aggregation.project(COUNT_FIELD).and("_id").as(LABEL_FIELD)
         );
 
         AggregationResults<ReportCountResponse> results =
