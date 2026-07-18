@@ -22,4 +22,9 @@ public class ReportController {
     public List<ReportCountResponse> getTicketsByStatus() {
         return ticketReportService.getTicketCountsByStatus();
     }
+
+    @GetMapping("/tickets-by-priority")
+    public List<ReportCountResponse> getTicketsByPriority() {
+        return ticketReportService.countTicketsByPriority();
+    }
 }
