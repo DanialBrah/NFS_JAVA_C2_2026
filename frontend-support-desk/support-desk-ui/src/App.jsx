@@ -1,9 +1,9 @@
-import { useState } from 'react'
-import reactLogo from './assets/react.svg'
-import viteLogo from './assets/vite.svg'
-import heroImg from './assets/hero.png'
-import './App.css'
+import Layout from './components/Layout';
 
 export default function App() {
-  return <h1>Support Desk UI</h1>;
+  return (
+    <Layout>
+      <p>Ticket dashboard goes here</p>
+    </Layout>
+  );
 }
