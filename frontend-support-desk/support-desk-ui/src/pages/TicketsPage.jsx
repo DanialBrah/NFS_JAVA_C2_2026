@@ -1,5 +1,4 @@
 import { useState } from 'react';
-import Layout from '../components/Layout';
 import TicketList from '../components/TicketList';
 import TicketDetail from '../components/TicketDetail';
 import TicketFilterPanel from '../components/TicketFilterPanel';
@@ -25,25 +24,23 @@ export default function TicketsPage() {
   });
 
   return (
-    <Layout>
-      <div className="dashboard">
-        <TicketFilterPanel
-          searchText={searchText}
-          onSearchChange={setSearchText}
-          statusFilter={statusFilter}
-          onStatusChange={setStatusFilter}
-          priorityFilter={priorityFilter}
-          onPriorityChange={setPriorityFilter}
+    <div className="dashboard">
+      <TicketFilterPanel
+        searchText={searchText}
+        onSearchChange={setSearchText}
+        statusFilter={statusFilter}
+        onStatusChange={setStatusFilter}
+        priorityFilter={priorityFilter}
+        onPriorityChange={setPriorityFilter}
+      />
+      <div className="dashboard-grid">
+        <TicketList
+          tickets={filteredTickets}
+          selectedId={selectedTicket?.id}
+          onSelect={setSelectedTicket}
         />
-        <div className="dashboard-grid">
-          <TicketList
-            tickets={filteredTickets}
-            selectedId={selectedTicket?.id}
-            onSelect={setSelectedTicket}
-          />
-          <TicketDetail ticket={selectedTicket} />
-        </div>
+        <TicketDetail ticket={selectedTicket} />
       </div>
-    </Layout>
+    </div>
   );
 }
