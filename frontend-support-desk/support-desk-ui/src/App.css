@@ -24,6 +24,33 @@
   color: var(--text);
 }
 
+/* ── AppShell nav ───────────────────────────────────────── */
+.app-nav {
+  display: flex;
+  gap: 4px;
+  padding: 0 24px;
+  border-bottom: 1px solid var(--border);
+  background: var(--bg);
+}
+
+.app-nav a {
+  padding: 12px 10px;
+  font-size: 0.9rem;
+  font-weight: 600;
+  color: var(--text);
+  text-decoration: none;
+  border-bottom: 2px solid transparent;
+}
+
+.app-nav a:hover {
+  color: var(--text-h);
+}
+
+.app-nav a.active {
+  color: var(--accent);
+  border-bottom-color: var(--accent);
+}
+
 /* ── Dashboard wrapper ──────────────────────────────────── */
 .dashboard {
   padding: 16px;
