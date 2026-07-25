@@ -51,6 +51,33 @@
   border-bottom-color: var(--accent);
 }
 
+.app-nav-spacer {
+  flex: 1;
+}
+
+.app-nav-user {
+  align-self: center;
+  font-size: 0.85rem;
+  color: var(--text);
+}
+
+.app-nav-logout {
+  align-self: center;
+  margin-left: 12px;
+  padding: 6px 12px;
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  background: var(--bg);
+  color: var(--text);
+  font-size: 0.85rem;
+  cursor: pointer;
+}
+
+.app-nav-logout:hover {
+  border-color: var(--accent-border);
+  color: var(--text-h);
+}
+
 /* ── Dashboard wrapper ──────────────────────────────────── */
 .dashboard {
   padding: 16px;
