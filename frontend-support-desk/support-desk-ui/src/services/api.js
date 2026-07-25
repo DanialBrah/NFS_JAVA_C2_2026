@@ -7,3 +7,19 @@ export async function fetchApiInfo() {
 
     return response.json();
 }
+
+export async function login(email, password) {
+    const response = await fetch('/api/auth/login', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email, password }),
+    });
+
+    const body = await response.json();
+
+    if (!response.ok) {
+        throw new Error(body.message || 'Login failed');
+    }
+
+    return body;
+}
