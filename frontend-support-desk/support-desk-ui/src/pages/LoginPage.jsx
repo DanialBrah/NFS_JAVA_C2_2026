@@ -1,12 +1,35 @@
 import { useState } from 'react';
+import { Navigate, useNavigate } from 'react-router';
 import Layout from '../components/Layout';
+import ErrorMessage from '../components/ErrorMessage';
+import { useAuth } from '../context/AuthContext.jsx';
 
 export default function LoginPage() {
+  const { token, login } = useAuth();
+  const navigate = useNavigate();
+
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  const [error, setError] = useState('');
+  const [submitting, setSubmitting] = useState(false);
 
-  function handleSubmit(e) {
+  if (token) {
+    return <Navigate to="/app/dashboard" replace />;
+  }
+
+  async function handleSubmit(e) {
     e.preventDefault();
+
+    try {
+      setSubmitting(true);
+      setError('');
+      await login(email, password);
+      navigate('/app/dashboard');
+    } catch (err) {
+      setError(err.message);
+    } finally {
+      setSubmitting(false);
+    }
   }
 
   return (
@@ -15,12 +38,15 @@ export default function LoginPage() {
         <form className="login-card" onSubmit={handleSubmit}>
           <h2>Log in</h2>
 
+          {error && <ErrorMessage message={error} />}
+
           <label className="login-field">
             Email
             <input
               type="email"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
+              required
             />
           </label>
 
@@ -30,10 +56,13 @@ export default function LoginPage() {
               type="password"
               value={password}
               onChange={(e) => setPassword(e.target.value)}
+              required
             />
           </label>
 
-          <button type="submit">Log in</button>
+          <button type="submit" disabled={submitting}>
+            {submitting ? 'Logging in…' : 'Log in'}
+          </button>
         </form>
       </div>
     </Layout>
