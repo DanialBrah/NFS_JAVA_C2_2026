@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { Navigate, useNavigate } from 'react-router';
+import { Navigate, useLocation, useNavigate } from 'react-router';
 import Layout from '../components/Layout';
 import ErrorMessage from '../components/ErrorMessage';
 import { useAuth } from '../context/AuthContext.jsx';
@@ -7,6 +7,8 @@ import { useAuth } from '../context/AuthContext.jsx';
 export default function LoginPage() {
   const { token, login } = useAuth();
   const navigate = useNavigate();
+  const location = useLocation();
+  const from = location.state?.from?.pathname || '/app/dashboard';
 
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
@@ -14,7 +16,7 @@ export default function LoginPage() {
   const [submitting, setSubmitting] = useState(false);
 
   if (token) {
-    return <Navigate to="/app/dashboard" replace />;
+    return <Navigate to={from} replace />;
   }
 
   async function handleSubmit(e) {
@@ -24,7 +26,7 @@ export default function LoginPage() {
       setSubmitting(true);
       setError('');
       await login(email, password);
-      navigate('/app/dashboard');
+      navigate(from, { replace: true });
     } catch (err) {
       setError(err.message);
     } finally {
