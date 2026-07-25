@@ -1,5 +1,4 @@
 import { useEffect, useState } from 'react';
-import Layout from '../components/Layout';
 import ApiInfoCard from '../components/ApiInfoCard';
 import { fetchApiInfo } from '../services/api';
 
@@ -43,10 +42,8 @@ export default function DashboardPage() {
   }, []);
 
   return (
-    <Layout>
-      <div className="dashboard">
-        <ApiInfoCard loading={loadingApi} error={apiError} apiInfo={apiInfo} />
-      </div>
-    </Layout>
+    <div className="dashboard">
+      <ApiInfoCard loading={loadingApi} error={apiError} apiInfo={apiInfo} />
+    </div>
   );
 }
