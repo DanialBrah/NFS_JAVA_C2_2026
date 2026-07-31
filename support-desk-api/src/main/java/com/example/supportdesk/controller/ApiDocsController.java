@@ -23,6 +23,7 @@ public class ApiDocsController {
                 new EndpointInfo("GET", "/api/v1/tickets", "USER or ADMIN", "List support tickets."),
                 new EndpointInfo("GET", "/api/v1/tickets/{id}", "USER or ADMIN", "Get a single ticket by id."),
                 new EndpointInfo("POST", "/api/v1/tickets", "USER or ADMIN", "Create a new ticket."),
+                new EndpointInfo("PUT", "/api/v1/tickets/{id}", "USER or ADMIN", "Update an existing ticket."),
                 new EndpointInfo("GET", "/api/v1/reports/tickets-by-status", "Authenticated", "Ticket counts grouped by status."),
                 new EndpointInfo("GET", "/api/v1/reports/tickets-by-priority", "Authenticated", "Ticket counts grouped by priority."),
                 new EndpointInfo("GET", "/api/tickets", "USER or ADMIN", "List support tickets (legacy, unversioned)."),
