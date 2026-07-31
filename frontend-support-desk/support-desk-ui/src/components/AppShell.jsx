@@ -18,8 +18,11 @@ export default function AppShell() {
         <NavLink to="/app/dashboard" className={({ isActive }) => (isActive ? 'active' : undefined)}>
           Dashboard
         </NavLink>
-        <NavLink to="/app/tickets" className={({ isActive }) => (isActive ? 'active' : undefined)}>
+        <NavLink to="/app/tickets" end className={({ isActive }) => (isActive ? 'active' : undefined)}>
           Tickets
+        </NavLink>
+        <NavLink to="/app/tickets/new" className={({ isActive }) => (isActive ? 'active' : undefined)}>
+          New Ticket
         </NavLink>
         <NavLink to="/app/reports" className={({ isActive }) => (isActive ? 'active' : undefined)}>
           Reports
