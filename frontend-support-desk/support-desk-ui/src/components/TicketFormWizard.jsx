@@ -2,48 +2,41 @@ const CATEGORIES = ['Hardware', 'Software', 'Network', 'Email', 'Account'];
 const PRIORITIES = ['LOW', 'MEDIUM', 'HIGH'];
 const STATUSES = ['OPEN', 'IN_PROGRESS', 'CLOSED'];
 
-export default function TicketFormWizard({ values, onChange, onSubmit }) {
+export default function TicketFormWizard({ values, errors, onChange, onSubmit }) {
   function handleChange(e) {
     onChange(e.target.name, e.target.value);
   }
 
+  function fieldProps(name) {
+    return {
+      id: name,
+      name,
+      value: values[name],
+      onChange: handleChange,
+      'aria-invalid': errors[name] ? true : undefined,
+      'aria-describedby': errors[name] ? `${name}-error` : undefined,
+    };
+  }
+
   return (
-    <form className="ticket-form" onSubmit={onSubmit}>
+    <form className="ticket-form" onSubmit={onSubmit} noValidate>
       <h2>New ticket</h2>
 
       <label className="ticket-form-field" htmlFor="title">
         Title
-        <input
-          id="title"
-          name="title"
-          type="text"
-          value={values.title}
-          onChange={handleChange}
-          required
-        />
+        <input type="text" {...fieldProps('title')} />
+        <FieldError name="title" errors={errors} />
       </label>
 
       <label className="ticket-form-field" htmlFor="description">
         Description
-        <textarea
-          id="description"
-          name="description"
-          rows="4"
-          value={values.description}
-          onChange={handleChange}
-          required
-        />
+        <textarea rows="4" {...fieldProps('description')} />
+        <FieldError name="description" errors={errors} />
       </label>
 
       <label className="ticket-form-field" htmlFor="category">
         Category
-        <select
-          id="category"
-          name="category"
-          value={values.category}
-          onChange={handleChange}
-          required
-        >
+        <select {...fieldProps('category')}>
           <option value="">Select a category…</option>
           {CATEGORIES.map((c) => (
             <option key={c} value={c}>
@@ -51,41 +44,48 @@ export default function TicketFormWizard({ values, onChange, onSubmit }) {
             </option>
           ))}
         </select>
+        <FieldError name="category" errors={errors} />
       </label>
 
       <label className="ticket-form-field" htmlFor="priority">
         Priority
-        <select
-          id="priority"
-          name="priority"
-          value={values.priority}
-          onChange={handleChange}
-        >
+        <select {...fieldProps('priority')}>
+          <option value="">Select a priority…</option>
           {PRIORITIES.map((p) => (
             <option key={p} value={p}>
               {p}
             </option>
           ))}
         </select>
+        <FieldError name="priority" errors={errors} />
       </label>
 
       <label className="ticket-form-field" htmlFor="status">
         Status
-        <select
-          id="status"
-          name="status"
-          value={values.status}
-          onChange={handleChange}
-        >
+        <select {...fieldProps('status')}>
+          <option value="">Select a status…</option>
           {STATUSES.map((s) => (
             <option key={s} value={s}>
               {s.replace('_', ' ')}
             </option>
           ))}
         </select>
+        <FieldError name="status" errors={errors} />
       </label>
 
       <button type="submit">Save ticket</button>
     </form>
+  );
+}
+
+function FieldError({ name, errors }) {
+  if (!errors[name]) {
+    return null;
+  }
+
+  return (
+    <span className="field-error" id={`${name}-error`} role="alert">
+      {errors[name]}
+    </span>
   );
 }
