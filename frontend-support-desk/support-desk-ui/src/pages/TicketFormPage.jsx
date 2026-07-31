@@ -35,9 +35,9 @@ function validateTicketForm(values) {
 }
 
 export default function TicketFormPage() {
-  const { id } = useParams();
+  const { ticketId } = useParams();
   const { token, user } = useAuth();
-  const isEditing = Boolean(id);
+  const isEditing = Boolean(ticketId);
 
   const [values, setValues] = useState(EMPTY_TICKET);
   const [errors, setErrors] = useState({});
@@ -47,13 +47,13 @@ export default function TicketFormPage() {
   const [successMessage, setSuccessMessage] = useState('');
 
   useEffect(() => {
-    if (!id) {
+    if (!ticketId) {
       return;
     }
 
     let active = true;
 
-    fetchTicketById(token, id)
+    fetchTicketById(token, ticketId)
       .then((ticket) => {
         if (!active) {
           return;
@@ -63,8 +63,10 @@ export default function TicketFormPage() {
           title: ticket.title ?? '',
           description: ticket.description ?? '',
           category: ticket.category ?? '',
-          priority: ticket.priority ?? '',
-          status: ticket.status ?? '',
+          // Older tickets were stored in lower case; the selects and the
+          // backend both expect upper case.
+          priority: ticket.priority?.toUpperCase() ?? '',
+          status: ticket.status?.toUpperCase() ?? '',
         });
       })
       .catch((err) => {
@@ -81,7 +83,7 @@ export default function TicketFormPage() {
     return () => {
       active = false;
     };
-  }, [id, token]);
+  }, [ticketId, token]);
 
   function handleChange(name, value) {
     setValues((current) => ({ ...current, [name]: value }));
@@ -115,7 +117,7 @@ export default function TicketFormPage() {
 
     try {
       if (isEditing) {
-        await updateTicket(id, token, {
+        await updateTicket(ticketId, token, {
           title: values.title,
           description: values.description,
           category: values.category,

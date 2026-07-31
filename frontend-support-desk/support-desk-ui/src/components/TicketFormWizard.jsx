@@ -14,6 +14,12 @@ export default function TicketFormWizard({
     onChange(e.target.name, e.target.value);
   }
 
+  // An existing ticket may use a category outside the suggested list; keep it
+  // so opening the edit form does not silently drop it.
+  const categoryOptions = CATEGORIES.includes(values.category) || !values.category
+    ? CATEGORIES
+    : [values.category, ...CATEGORIES];
+
   function fieldProps(name) {
     return {
       id: name,
@@ -45,7 +51,7 @@ export default function TicketFormWizard({
         Category
         <select {...fieldProps('category')}>
           <option value="">Select a category…</option>
-          {CATEGORIES.map((c) => (
+          {categoryOptions.map((c) => (
             <option key={c} value={c}>
               {c}
             </option>
