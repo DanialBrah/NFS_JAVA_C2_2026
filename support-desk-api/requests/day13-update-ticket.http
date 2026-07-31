@@ -1,0 +1,99 @@
+### Day 13 Exercise 1 - Update Ticket Endpoint Test Evidence
+### Run Spring Boot first: mvn spring-boot:run -Dspring-boot.run.profiles=local
+
+### 1. Login as seeded admin -> expect 200 with token
+POST http://localhost:8081/api/auth/login
+Content-Type: application/json
+
+{
+  "email": "admin@example.com",
+  "password": "Admin@12345"
+}
+
+### 2. List tickets and copy one id for the update requests -> expect 200
+# Replace TOKEN with the token from request 1
+GET http://localhost:8081/api/v1/tickets
+Authorization: Bearer TOKEN
+
+### 3. Update ticket without token -> expect 401
+PUT http://localhost:8081/api/v1/tickets/REPLACE_WITH_REAL_ID
+Content-Type: application/json
+
+{
+  "title": "Printer jam on level 3",
+  "description": "Paper keeps jamming in the main tray.",
+  "category": "Hardware",
+  "priority": "HIGH",
+  "status": "IN_PROGRESS"
+}
+
+### 4. Valid update with USER or ADMIN token -> expect 200 with updated ticket
+# Replace TOKEN with the token from request 1
+# Replace the id below with an actual id returned by request 2
+PUT http://localhost:8081/api/v1/tickets/REPLACE_WITH_REAL_ID
+Authorization: Bearer TOKEN
+Content-Type: application/json
+
+{
+  "title": "Printer jam on level 3",
+  "description": "Paper keeps jamming in the main tray.",
+  "category": "Hardware",
+  "priority": "HIGH",
+  "status": "IN_PROGRESS"
+}
+
+### 5. Invalid priority -> expect 400
+# Replace TOKEN with the token from request 1
+PUT http://localhost:8081/api/v1/tickets/REPLACE_WITH_REAL_ID
+Authorization: Bearer TOKEN
+Content-Type: application/json
+
+{
+  "title": "Printer jam on level 3",
+  "description": "Paper keeps jamming in the main tray.",
+  "category": "Hardware",
+  "priority": "URGENT",
+  "status": "OPEN"
+}
+
+### 6. Invalid status -> expect 400
+# Replace TOKEN with the token from request 1
+PUT http://localhost:8081/api/v1/tickets/REPLACE_WITH_REAL_ID
+Authorization: Bearer TOKEN
+Content-Type: application/json
+
+{
+  "title": "Printer jam on level 3",
+  "description": "Paper keeps jamming in the main tray.",
+  "category": "Hardware",
+  "priority": "LOW",
+  "status": "DONE"
+}
+
+### 7. Missing required fields -> expect 400
+# Replace TOKEN with the token from request 1
+PUT http://localhost:8081/api/v1/tickets/REPLACE_WITH_REAL_ID
+Authorization: Bearer TOKEN
+Content-Type: application/json
+
+{
+  "title": "",
+  "description": "",
+  "category": "",
+  "priority": "LOW",
+  "status": "OPEN"
+}
+
+### 8. Unknown ticket id -> expect 404
+# Replace TOKEN with the token from request 1
+PUT http://localhost:8081/api/v1/tickets/000000000000000000000000
+Authorization: Bearer TOKEN
+Content-Type: application/json
+
+{
+  "title": "Printer jam on level 3",
+  "description": "Paper keeps jamming in the main tray.",
+  "category": "Hardware",
+  "priority": "LOW",
+  "status": "OPEN"
+}

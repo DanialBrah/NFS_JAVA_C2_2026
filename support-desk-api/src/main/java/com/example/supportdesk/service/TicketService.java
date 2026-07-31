@@ -14,6 +14,7 @@ import org.springframework.stereotype.Service;
 
 import com.example.supportdesk.dto.CreateTicketRequest;
 import com.example.supportdesk.dto.TicketResponse;
+import com.example.supportdesk.dto.UpdateTicketRequest;
 import com.example.supportdesk.exception.ResourceNotFoundException;
 import com.example.supportdesk.model.Ticket;
 import com.example.supportdesk.repository.TicketRepository;
@@ -84,6 +85,22 @@ public class TicketService {
         logger.info("Created ticket with id={}", saved.getId());
 
         return toResponse(saved);
+    }
+
+    public TicketResponse updateTicket(String id, UpdateTicketRequest request) {
+        Ticket ticket = ticketRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("Ticket " + id + " was not found"));
+
+        ticket.setTitle(request.getTitle().trim());
+        ticket.setDescription(request.getDescription().trim());
+        ticket.setCategory(request.getCategory().trim());
+        ticket.setPriority(request.getPriority().trim());
+        ticket.setStatus(request.getStatus().trim());
+
+        Ticket updated = ticketRepository.save(ticket);
+        logger.info("Updated ticket with id={}", updated.getId());
+
+        return toResponse(updated);
     }
 
     private boolean hasValue(String value) {
