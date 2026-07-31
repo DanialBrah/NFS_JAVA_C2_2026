@@ -2,7 +2,14 @@ const CATEGORIES = ['Hardware', 'Software', 'Network', 'Email', 'Account'];
 const PRIORITIES = ['LOW', 'MEDIUM', 'HIGH'];
 const STATUSES = ['OPEN', 'IN_PROGRESS', 'CLOSED'];
 
-export default function TicketFormWizard({ values, errors, onChange, onSubmit }) {
+export default function TicketFormWizard({
+  heading = 'New ticket',
+  values,
+  errors,
+  saving = false,
+  onChange,
+  onSubmit,
+}) {
   function handleChange(e) {
     onChange(e.target.name, e.target.value);
   }
@@ -20,7 +27,7 @@ export default function TicketFormWizard({ values, errors, onChange, onSubmit })
 
   return (
     <form className="ticket-form" onSubmit={onSubmit} noValidate>
-      <h2>New ticket</h2>
+      <h2>{heading}</h2>
 
       <label className="ticket-form-field" htmlFor="title">
         Title
@@ -73,7 +80,9 @@ export default function TicketFormWizard({ values, errors, onChange, onSubmit })
         <FieldError name="status" errors={errors} />
       </label>
 
-      <button type="submit">Save ticket</button>
+      <button type="submit" disabled={saving}>
+        {saving ? 'Saving…' : 'Save ticket'}
+      </button>
     </form>
   );
 }
