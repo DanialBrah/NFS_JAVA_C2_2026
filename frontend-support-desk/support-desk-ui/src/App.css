@@ -264,6 +264,11 @@
   color: #b91c1c;
 }
 
+.success-message {
+  background: #dcfce7;
+  color: #166534;
+}
+
 /* ── LoginPage ──────────────────────────────────────────── */
 .login-page {
   display: flex;
