@@ -67,16 +67,24 @@ export async function updateTicket(id, token, payload) {
     return sendTicketRequest(`/api/v1/tickets/${id}`, 'PUT', token, payload, 'Failed to update ticket');
 }
 
-export async function fetchTicketById(token, id) {
-    const response = await fetch(`/api/v1/tickets/${id}`, {
+async function getTickets(url, token, fallbackMessage) {
+    const response = await fetch(url, {
         headers: { Authorization: `Bearer ${token}` },
     });
 
     const body = await readBody(response);
 
     if (!response.ok) {
-        throw new Error(body?.message || `Failed to load ticket (${response.status})`);
+        throw new Error(body?.message || `${fallbackMessage} (${response.status})`);
     }
 
     return body;
+}
+
+export async function fetchTickets(token) {
+    return getTickets('/api/v1/tickets', token, 'Failed to load tickets');
+}
+
+export async function fetchTicketById(token, id) {
+    return getTickets(`/api/v1/tickets/${id}`, token, 'Failed to load ticket');
 }
