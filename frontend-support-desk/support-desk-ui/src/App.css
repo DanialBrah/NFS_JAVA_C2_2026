@@ -355,6 +355,16 @@
   resize: vertical;
 }
 
+.ticket-form-field [aria-invalid="true"] {
+  border-color: #b91c1c;
+}
+
+.field-error {
+  font-size: 0.8rem;
+  font-weight: 500;
+  color: #b91c1c;
+}
+
 .ticket-form button {
   margin-top: 6px;
   align-self: flex-start;
