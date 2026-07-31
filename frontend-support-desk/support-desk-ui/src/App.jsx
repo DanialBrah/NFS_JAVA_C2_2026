@@ -25,7 +25,9 @@ export default function App() {
         <Route index element={<Navigate to="dashboard" replace />} />
         <Route path="dashboard" element={<DashboardPage />} />
         <Route path="tickets" element={<TicketsPage />} />
-        <Route path="tickets/new" element={<TicketFormPage />} />
+        {/* Distinct keys so switching between create and edit remounts the form. */}
+        <Route path="tickets/new" element={<TicketFormPage key="new" />} />
+        <Route path="tickets/:id/edit" element={<TicketFormPage key="edit" />} />
         <Route path="reports" element={<ReportsPage />} />
       </Route>
 
