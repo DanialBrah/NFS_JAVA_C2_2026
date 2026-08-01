@@ -21,6 +21,15 @@ export function fetchTickets(token) {
     });
 }
 
+export function fetchTicketsPaged(token, { page = 0, size = 5, sortBy = 'createdAt', direction = 'desc' } = {}) {
+    const query = new URLSearchParams({ page, size, sortBy, direction });
+
+    return apiRequest(`/api/v1/tickets/paged?${query}`, {
+        token,
+        errorMessage: 'Failed to load tickets',
+    });
+}
+
 export function fetchTicketById(token, id) {
     return apiRequest(`/api/v1/tickets/${id}`, {
         token,

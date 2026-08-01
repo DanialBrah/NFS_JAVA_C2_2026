@@ -21,6 +21,7 @@ public class ApiDocsController {
                 new EndpointInfo("GET", "/api/about", "Public", "About info."),
                 new EndpointInfo("GET", "/api/docs", "Public", "This API documentation."),
                 new EndpointInfo("GET", "/api/v1/tickets", "USER or ADMIN", "List support tickets."),
+                new EndpointInfo("GET", "/api/v1/tickets/paged", "USER or ADMIN", "List tickets one page at a time."),
                 new EndpointInfo("GET", "/api/v1/tickets/{id}", "USER or ADMIN", "Get a single ticket by id."),
                 new EndpointInfo("POST", "/api/v1/tickets", "USER or ADMIN", "Create a new ticket."),
                 new EndpointInfo("PUT", "/api/v1/tickets/{id}", "USER or ADMIN", "Update an existing ticket."),
