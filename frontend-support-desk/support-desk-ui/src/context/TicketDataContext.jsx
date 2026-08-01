@@ -1,4 +1,4 @@
-import { createContext, useCallback, useContext, useEffect, useMemo, useReducer } from 'react';
+import { createContext, useCallback, useContext, useEffect, useMemo, useReducer, useRef } from 'react';
 import { useAuth } from './AuthContext.jsx';
 import { fetchTicketsPaged } from '../services/api';
 
@@ -30,44 +30,76 @@ const initialState = {
     status: 'ALL',
     priority: 'ALL',
   },
+  // Pages we have already fetched, keyed by page|size|sortBy|direction.
+  cache: {},
+  // '' while loading, then 'backend' or 'cache'.
+  source: '',
 };
+
+function makeCacheKey({ page, size, sortBy, direction }) {
+  return `${page}|${size}|${sortBy}|${direction}`;
+}
 
 // Changing size or sort invalidates the current page number.
 function withQuery(state, changes) {
   return { ...state, query: { ...state.query, page: 0, ...changes } };
 }
 
+// A selection only survives if that ticket is on the page being shown.
+function keepSelection(state, tickets) {
+  return tickets.some((t) => t.id === state.selectedTicketId) ? state.selectedTicketId : null;
+}
+
 function ticketDataReducer(state, action) {
   switch (action.type) {
     case 'LOAD_START':
-      return { ...state, loading: true, error: '' };
+      return { ...state, loading: true, error: '', source: '' };
 
     case 'LOAD_SUCCESS': {
-      const response = action.payload ?? {};
+      const { key, response = {} } = action.payload;
       const tickets = response.content ?? [];
+      const page = {
+        number: response.number ?? 0,
+        size: response.size ?? state.query.size,
+        totalElements: response.totalElements ?? tickets.length,
+        totalPages: response.totalPages ?? 0,
+        first: response.first ?? true,
+        last: response.last ?? true,
+      };
 
       return {
         ...state,
         tickets,
-        page: {
-          number: response.number ?? 0,
-          size: response.size ?? state.query.size,
-          totalElements: response.totalElements ?? tickets.length,
-          totalPages: response.totalPages ?? 0,
-          first: response.first ?? true,
-          last: response.last ?? true,
-        },
+        page,
+        // Remember this page so returning to it needs no request.
+        cache: { ...state.cache, [key]: { tickets, page } },
+        source: 'backend',
         loading: false,
         error: '',
-        // Drop the selection if that ticket is not on this page.
-        selectedTicketId: tickets.some((t) => t.id === state.selectedTicketId)
-          ? state.selectedTicketId
-          : null,
+        selectedTicketId: keepSelection(state, tickets),
+      };
+    }
+
+    case 'LOAD_FROM_CACHE': {
+      const entry = state.cache[action.payload];
+
+      if (!entry) {
+        return state;
+      }
+
+      return {
+        ...state,
+        tickets: entry.tickets,
+        page: entry.page,
+        source: 'cache',
+        loading: false,
+        error: '',
+        selectedTicketId: keepSelection(state, entry.tickets),
       };
     }
 
     case 'LOAD_ERROR':
-      return { ...state, loading: false, error: action.payload };
+      return { ...state, loading: false, error: action.payload, source: '' };
 
     case 'SET_PAGE':
       return { ...state, query: { ...state.query, page: Math.max(0, action.payload) } };
@@ -106,11 +138,26 @@ export function TicketDataProvider({ children }) {
   // box never triggers a refetch.
   const { page, size, sortBy, direction } = state.query;
 
-  const loadTickets = useCallback(() => {
+  // The cache is read through a ref so that filling it does not change the
+  // identity of loadTickets, which would re-run the effect in a loop.
+  const cacheRef = useRef(state.cache);
+
+  useEffect(() => {
+    cacheRef.current = state.cache;
+  }, [state.cache]);
+
+  const loadTickets = useCallback(({ force = false } = {}) => {
+    const key = makeCacheKey({ page, size, sortBy, direction });
+
+    if (!force && cacheRef.current[key]) {
+      dispatch({ type: 'LOAD_FROM_CACHE', payload: key });
+      return Promise.resolve();
+    }
+
     dispatch({ type: 'LOAD_START' });
 
     return fetchTicketsPaged(token, { page, size, sortBy, direction })
-      .then((response) => dispatch({ type: 'LOAD_SUCCESS', payload: response }))
+      .then((response) => dispatch({ type: 'LOAD_SUCCESS', payload: { key, response } }))
       .catch((err) => dispatch({ type: 'LOAD_ERROR', payload: err.message }));
   }, [token, page, size, sortBy, direction]);
 
@@ -138,7 +185,9 @@ export function TicketDataProvider({ children }) {
       ...state,
       filteredTickets,
       selectedTicket: state.tickets.find((t) => t.id === state.selectedTicketId) ?? null,
-      reloadTickets: loadTickets,
+      // Refresh always skips the cache.
+      refreshTickets: () => loadTickets({ force: true }),
+      cachedPageCount: Object.keys(state.cache).length,
       goToNextPage: () => dispatch({ type: 'SET_PAGE', payload: state.query.page + 1 }),
       goToPreviousPage: () => dispatch({ type: 'SET_PAGE', payload: state.query.page - 1 }),
       setPageSize: (value) => dispatch({ type: 'SET_PAGE_SIZE', payload: Number(value) }),
