@@ -16,6 +16,8 @@ export default function TicketsPage() {
     error,
     page,
     filters,
+    source,
+    cachedPageCount,
     setSearchText,
     setStatusFilter,
     setPriorityFilter,
@@ -42,9 +44,16 @@ export default function TicketsPage() {
       ) : (
         <>
           <p className="ticket-count">
+            {source && (
+              <span className={`source-badge source-${source}`}>
+                {source === 'cache' ? 'Loaded from cache' : 'Fetched from backend'}
+              </span>
+            )}
             Showing {filteredTickets.length} of {tickets.length} on this page
             {' · '}
             {page.totalElements} tickets in total
+            {' · '}
+            {cachedPageCount} page{cachedPageCount === 1 ? '' : 's'} cached
           </p>
 
           <div className="dashboard-grid">

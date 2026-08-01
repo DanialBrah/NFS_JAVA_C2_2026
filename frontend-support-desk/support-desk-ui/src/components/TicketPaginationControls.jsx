@@ -13,6 +13,7 @@ export default function TicketPaginationControls() {
     setPageSize,
     setSortField,
     setSortDirection,
+    refreshTickets,
   } = useTicketData();
 
   return (
@@ -58,6 +59,10 @@ export default function TicketPaginationControls() {
           <option value="desc">Descending</option>
         </select>
       </label>
+
+      <button type="button" onClick={refreshTickets} disabled={loading}>
+        ⟳ Refresh
+      </button>
 
       <span className="pagination-spacer" />
 

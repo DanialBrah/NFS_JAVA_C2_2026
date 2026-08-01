@@ -195,6 +195,18 @@
   color: var(--text);
 }
 
+.source-badge {
+  display: inline-block;
+  margin-right: 8px;
+  padding: 2px 8px;
+  border-radius: 9999px;
+  font-size: 0.75rem;
+  font-weight: 600;
+}
+
+.source-cache   { background: #ede9fe; color: #6d28d9; }
+.source-backend { background: #dbeafe; color: #1e40af; }
+
 /* ── TicketList ─────────────────────────────────────────── */
 .ticket-list {
   list-style: none;
