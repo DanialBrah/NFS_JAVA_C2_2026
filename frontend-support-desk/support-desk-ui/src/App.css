@@ -128,6 +128,13 @@
   color: var(--text-h);
 }
 
+/* ── Ticket count ───────────────────────────────────────── */
+.ticket-count {
+  margin: 0 0 12px;
+  font-size: 0.85rem;
+  color: var(--text);
+}
+
 /* ── TicketList ─────────────────────────────────────────── */
 .ticket-list {
   list-style: none;
