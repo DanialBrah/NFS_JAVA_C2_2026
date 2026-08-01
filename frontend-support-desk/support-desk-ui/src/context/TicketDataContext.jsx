@@ -1,6 +1,6 @@
 import { createContext, useCallback, useContext, useEffect, useMemo, useReducer, useRef } from 'react';
 import { useAuth } from './AuthContext.jsx';
-import { fetchTicketsPaged } from '../services/api';
+import { fetchTicketsPaged, updateTicket } from '../services/api';
 
 const TicketDataContext = createContext(null);
 
@@ -34,6 +34,9 @@ const initialState = {
   cache: {},
   // '' while loading, then 'backend' or 'cache'.
   source: '',
+  // Id of the ticket whose status change is in flight.
+  updatingTicketId: null,
+  updateError: '',
 };
 
 function makeCacheKey({ page, size, sortBy, direction }) {
@@ -48,6 +51,21 @@ function withQuery(state, changes) {
 // A selection only survives if that ticket is on the page being shown.
 function keepSelection(state, tickets) {
   return tickets.some((t) => t.id === state.selectedTicketId) ? state.selectedTicketId : null;
+}
+
+// Swap one ticket in the visible list and in every cached page that holds it,
+// otherwise paging away and back would show the stale version.
+function replaceTicket(state, ticket) {
+  const swap = (list) => list.map((t) => (t.id === ticket.id ? ticket : t));
+
+  const cache = {};
+  for (const [key, entry] of Object.entries(state.cache)) {
+    cache[key] = entry.tickets.some((t) => t.id === ticket.id)
+      ? { ...entry, tickets: swap(entry.tickets) }
+      : entry;
+  }
+
+  return { ...state, tickets: swap(state.tickets), cache };
 }
 
 function ticketDataReducer(state, action) {
@@ -125,6 +143,30 @@ function ticketDataReducer(state, action) {
     case 'SELECT_TICKET':
       return { ...state, selectedTicketId: action.payload };
 
+    // Step 2: show the change straight away.
+    case 'UPDATE_TICKET_OPTIMISTIC':
+      return {
+        ...replaceTicket(state, action.payload),
+        updatingTicketId: action.payload.id,
+        updateError: '',
+      };
+
+    // Step 4: the backend agreed - keep what it sent back.
+    case 'UPDATE_TICKET_SUCCESS':
+      return {
+        ...replaceTicket(state, action.payload),
+        updatingTicketId: null,
+        updateError: '',
+      };
+
+    // Step 5: the backend refused - put the backup back.
+    case 'UPDATE_TICKET_ROLLBACK':
+      return {
+        ...replaceTicket(state, action.payload.ticket),
+        updatingTicketId: null,
+        updateError: action.payload.message,
+      };
+
     default:
       return state;
   }
@@ -165,6 +207,34 @@ export function TicketDataProvider({ children }) {
     loadTickets();
   }, [loadTickets]);
 
+  const changeTicketStatus = useCallback((ticket, status) => {
+    if (!ticket || ticket.status === status) {
+      return Promise.resolve();
+    }
+
+    // 1. Keep the current ticket so we can put it back.
+    const backup = ticket;
+
+    // 2. Show the new status immediately.
+    dispatch({ type: 'UPDATE_TICKET_OPTIMISTIC', payload: { ...ticket, status } });
+
+    // 3. Tell the backend. PUT replaces the whole ticket, so every field goes.
+    return updateTicket(ticket.id, token, {
+      title: ticket.title,
+      description: ticket.description,
+      category: ticket.category,
+      // Older tickets are stored in lower case; the backend only accepts upper.
+      priority: ticket.priority?.toUpperCase(),
+      status,
+    })
+      // 4. Keep whatever the backend says the ticket now looks like.
+      .then((saved) => dispatch({ type: 'UPDATE_TICKET_SUCCESS', payload: saved }))
+      // 5. Roll back to the backup.
+      .catch((err) =>
+        dispatch({ type: 'UPDATE_TICKET_ROLLBACK', payload: { ticket: backup, message: err.message } }),
+      );
+  }, [token]);
+
   const value = useMemo(() => {
     const { searchText, status, priority } = state.filters;
     const query = searchText.toLowerCase();
@@ -197,8 +267,9 @@ export function TicketDataProvider({ children }) {
       setStatusFilter: (value) => dispatch({ type: 'SET_STATUS_FILTER', payload: value }),
       setPriorityFilter: (value) => dispatch({ type: 'SET_PRIORITY_FILTER', payload: value }),
       selectTicket: (id) => dispatch({ type: 'SELECT_TICKET', payload: id }),
+      changeTicketStatus,
     };
-  }, [state, loadTickets]);
+  }, [state, loadTickets, changeTicketStatus]);
 
   return (
     <TicketDataContext.Provider value={value}>
