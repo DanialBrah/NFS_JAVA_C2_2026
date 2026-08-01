@@ -1,12 +1,14 @@
 import TicketList from '../components/TicketList';
 import TicketDetail from '../components/TicketDetail';
 import TicketFilterPanel from '../components/TicketFilterPanel';
+import TicketPaginationControls from '../components/TicketPaginationControls';
 import ErrorMessage from '../components/ErrorMessage';
 import LoadingMessage from '../components/LoadingMessage';
 import { useTicketData } from '../context/TicketDataContext.jsx';
 
 export default function TicketsPage() {
   const {
+    tickets,
     filteredTickets,
     selectedTicket,
     selectedTicketId,
@@ -19,14 +21,6 @@ export default function TicketsPage() {
     setPriorityFilter,
     selectTicket,
   } = useTicketData();
-
-  if (loading) {
-    return (
-      <div className="dashboard">
-        <LoadingMessage message="Loading tickets…" />
-      </div>
-    );
-  }
 
   return (
     <div className="dashboard">
@@ -41,18 +35,28 @@ export default function TicketsPage() {
         onPriorityChange={setPriorityFilter}
       />
 
-      <p className="ticket-count">
-        Showing {filteredTickets.length} of {page.totalElements} tickets
-      </p>
+      <TicketPaginationControls />
 
-      <div className="dashboard-grid">
-        <TicketList
-          tickets={filteredTickets}
-          selectedId={selectedTicketId}
-          onSelect={(ticket) => selectTicket(ticket.id)}
-        />
-        <TicketDetail ticket={selectedTicket} />
-      </div>
+      {loading ? (
+        <LoadingMessage message="Loading tickets…" />
+      ) : (
+        <>
+          <p className="ticket-count">
+            Showing {filteredTickets.length} of {tickets.length} on this page
+            {' · '}
+            {page.totalElements} tickets in total
+          </p>
+
+          <div className="dashboard-grid">
+            <TicketList
+              tickets={filteredTickets}
+              selectedId={selectedTicketId}
+              onSelect={(ticket) => selectTicket(ticket.id)}
+            />
+            <TicketDetail ticket={selectedTicket} />
+          </div>
+        </>
+      )}
     </div>
   );
 }
