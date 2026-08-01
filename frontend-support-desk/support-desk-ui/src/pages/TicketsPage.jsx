@@ -1,62 +1,24 @@
-import { useEffect, useState } from 'react';
 import TicketList from '../components/TicketList';
 import TicketDetail from '../components/TicketDetail';
 import TicketFilterPanel from '../components/TicketFilterPanel';
 import ErrorMessage from '../components/ErrorMessage';
 import LoadingMessage from '../components/LoadingMessage';
-import { useAuth } from '../context/AuthContext.jsx';
-import { fetchTickets } from '../services/api';
+import { useTicketData } from '../context/TicketDataContext.jsx';
 
 export default function TicketsPage() {
-  const { token } = useAuth();
-
-  const [tickets, setTickets] = useState([]);
-  const [loading, setLoading] = useState(true);
-  const [loadError, setLoadError] = useState('');
-
-  const [selectedTicket, setSelectedTicket] = useState(null);
-  const [searchText, setSearchText] = useState('');
-  const [statusFilter, setStatusFilter] = useState('ALL');
-  const [priorityFilter, setPriorityFilter] = useState('ALL');
-
-  useEffect(() => {
-    let active = true;
-
-    fetchTickets(token)
-      .then((loaded) => {
-        if (active) {
-          setTickets(loaded ?? []);
-        }
-      })
-      .catch((err) => {
-        if (active) {
-          setLoadError(err.message);
-        }
-      })
-      .finally(() => {
-        if (active) {
-          setLoading(false);
-        }
-      });
-
-    return () => {
-      active = false;
-    };
-  }, [token]);
-
-  const filteredTickets = tickets.filter((ticket) => {
-    const query = searchText.toLowerCase();
-    const matchesSearch =
-      ticket.title.toLowerCase().includes(query) ||
-      ticket.category.toLowerCase().includes(query);
-    // Seeded tickets are not all stored in upper case, so compare case-insensitively.
-    const matchesStatus =
-      statusFilter === 'ALL' || ticket.status?.toUpperCase() === statusFilter;
-    const matchesPriority =
-      priorityFilter === 'ALL' || ticket.priority?.toUpperCase() === priorityFilter;
-
-    return matchesSearch && matchesStatus && matchesPriority;
-  });
+  const {
+    filteredTickets,
+    selectedTicket,
+    selectedTicketId,
+    loading,
+    error,
+    page,
+    filters,
+    setSearchText,
+    setStatusFilter,
+    setPriorityFilter,
+    selectTicket,
+  } = useTicketData();
 
   if (loading) {
     return (
@@ -68,21 +30,26 @@ export default function TicketsPage() {
 
   return (
     <div className="dashboard">
-      {loadError && <ErrorMessage message={loadError} />}
+      {error && <ErrorMessage message={error} />}
 
       <TicketFilterPanel
-        searchText={searchText}
+        searchText={filters.searchText}
         onSearchChange={setSearchText}
-        statusFilter={statusFilter}
+        statusFilter={filters.status}
         onStatusChange={setStatusFilter}
-        priorityFilter={priorityFilter}
+        priorityFilter={filters.priority}
         onPriorityChange={setPriorityFilter}
       />
+
+      <p className="ticket-count">
+        Showing {filteredTickets.length} of {page.totalElements} tickets
+      </p>
+
       <div className="dashboard-grid">
         <TicketList
           tickets={filteredTickets}
-          selectedId={selectedTicket?.id}
-          onSelect={setSelectedTicket}
+          selectedId={selectedTicketId}
+          onSelect={(ticket) => selectTicket(ticket.id)}
         />
         <TicketDetail ticket={selectedTicket} />
       </div>

@@ -2,6 +2,7 @@ import { Navigate, Route, Routes } from 'react-router';
 import './App.css';
 import AppShell from './components/AppShell.jsx';
 import ProtectedRoute from './components/ProtectedRoute.jsx';
+import { TicketDataProvider } from './context/TicketDataContext.jsx';
 import LoginPage from './pages/LoginPage.jsx';
 import DashboardPage from './pages/DashboardPage.jsx';
 import TicketsPage from './pages/TicketsPage.jsx';
@@ -24,7 +25,14 @@ export default function App() {
       >
         <Route index element={<Navigate to="dashboard" replace />} />
         <Route path="dashboard" element={<DashboardPage />} />
-        <Route path="tickets" element={<TicketsPage />} />
+        <Route
+          path="tickets"
+          element={
+            <TicketDataProvider>
+              <TicketsPage />
+            </TicketDataProvider>
+          }
+        />
         {/* Distinct keys so switching between create and edit remounts the form. */}
         <Route path="tickets/new" element={<TicketFormPage key="new" />} />
         <Route path="tickets/:ticketId/edit" element={<TicketFormPage key="edit" />} />
