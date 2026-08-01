@@ -5,6 +5,7 @@ import com.example.supportdesk.dto.TicketResponse;
 import com.example.supportdesk.dto.UpdateTicketRequest;
 import com.example.supportdesk.service.TicketService;
 import jakarta.validation.Valid;
+import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -35,6 +36,16 @@ public class TicketV1Controller {
         @RequestParam(required = false) String category
     ) {
         return ticketService.getTickets(status, priority, category);
+    }
+
+    @GetMapping("/paged")
+    public Page<TicketResponse> getTicketsPaged(
+        @RequestParam(defaultValue = "0") int page,
+        @RequestParam(defaultValue = "5") int size,
+        @RequestParam(defaultValue = "createdAt") String sortBy,
+        @RequestParam(defaultValue = "desc") String direction
+    ) {
+        return ticketService.getTicketsPaged(page, size, sortBy, direction);
     }
 
     @GetMapping("/{id}")
