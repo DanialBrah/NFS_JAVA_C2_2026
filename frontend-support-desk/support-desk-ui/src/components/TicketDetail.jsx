@@ -1,6 +1,7 @@
 import { Link } from 'react-router';
 import PriorityBadge from './PriorityBadge';
 import StatusBadge from './StatusBadge';
+import TicketStatusActions from './TicketStatusActions';
 
 export default function TicketDetail({ ticket }) {
   if (!ticket) {
@@ -33,6 +34,8 @@ export default function TicketDetail({ ticket }) {
           </tr>
         </tbody>
       </table>
+
+      <TicketStatusActions ticket={ticket} />
 
       <Link className="ticket-detail-edit" to={`/app/tickets/${ticket.id}/edit`}>
         Edit ticket

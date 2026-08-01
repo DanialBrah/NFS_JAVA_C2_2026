@@ -285,6 +285,68 @@
   white-space: nowrap;
 }
 
+/* ── TicketStatusActions ────────────────────────────────── */
+.status-actions {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  margin-top: 16px;
+  padding-top: 16px;
+  border-top: 1px solid var(--border);
+}
+
+.status-actions-label {
+  font-size: 0.8rem;
+  font-weight: 600;
+  color: var(--text);
+}
+
+.status-actions-buttons {
+  display: flex;
+  gap: 6px;
+  flex-wrap: wrap;
+}
+
+.status-actions-buttons button {
+  padding: 6px 12px;
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  background: var(--bg);
+  color: var(--text-h);
+  font-size: 0.8rem;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.status-actions-buttons button:hover:not(:disabled) {
+  border-color: var(--accent-border);
+}
+
+.status-actions-buttons button.active {
+  border-color: var(--accent);
+  background: var(--accent-bg);
+  color: var(--accent);
+}
+
+.status-actions-buttons button:disabled {
+  cursor: not-allowed;
+}
+
+.status-actions-buttons button:disabled:not(.active) {
+  opacity: 0.45;
+}
+
+.status-actions-note {
+  font-size: 0.8rem;
+  color: var(--text);
+}
+
+.status-actions-error {
+  font-size: 0.8rem;
+  font-weight: 500;
+  color: #b91c1c;
+}
+
 .ticket-detail-edit {
   display: inline-block;
   margin-top: 16px;
