@@ -1,6 +1,7 @@
 import { createContext, useCallback, useContext, useEffect, useMemo, useReducer, useRef } from 'react';
 import { useAuth } from './AuthContext.jsx';
 import { fetchTicketsPaged, updateTicket } from '../services/api';
+import { filterTickets } from '../utils/tickets';
 
 const TicketDataContext = createContext(null);
 
@@ -237,19 +238,11 @@ export function TicketDataProvider({ children }) {
 
   const value = useMemo(() => {
     const { searchText, status, priority } = state.filters;
-    const query = searchText.toLowerCase();
 
     // Filters apply to the records on the current page.
-    const filteredTickets = state.tickets.filter((ticket) => {
-      const matchesSearch =
-        ticket.title.toLowerCase().includes(query) ||
-        ticket.category.toLowerCase().includes(query);
-      // Seeded tickets are not all stored in upper case.
-      const matchesStatus = status === 'ALL' || ticket.status?.toUpperCase() === status;
-      const matchesPriority = priority === 'ALL' || ticket.priority?.toUpperCase() === priority;
-
-      return matchesSearch && matchesStatus && matchesPriority;
-    });
+    const filteredTickets = filterTickets(state.tickets, searchText, status).filter(
+      (ticket) => priority === 'ALL' || ticket.priority?.toUpperCase() === priority,
+    );
 
     return {
       ...state,
