@@ -5,6 +5,7 @@ import ErrorMessage from '../components/ErrorMessage';
 import LoadingMessage from '../components/LoadingMessage';
 import { useAuth } from '../context/AuthContext.jsx';
 import { createTicket, fetchTicketById, updateTicket } from '../services/api';
+import { normalizeTicketFormPayload, validateTicketForm } from '../utils/ticketFormValidation';
 
 const EMPTY_TICKET = {
   title: '',
@@ -13,26 +14,6 @@ const EMPTY_TICKET = {
   priority: '',
   status: '',
 };
-
-const REQUIRED_MESSAGES = {
-  title: 'Title is required',
-  description: 'Description is required',
-  category: 'Category is required',
-  priority: 'Priority is required',
-  status: 'Status is required',
-};
-
-function validateTicketForm(values) {
-  const errors = {};
-
-  for (const [field, message] of Object.entries(REQUIRED_MESSAGES)) {
-    if (!values[field].trim()) {
-      errors[field] = message;
-    }
-  }
-
-  return errors;
-}
 
 export default function TicketFormPage() {
   const { ticketId } = useParams();
@@ -115,23 +96,25 @@ export default function TicketFormPage() {
     setSubmitError('');
     setSuccessMessage('');
 
+    const normalized = normalizeTicketFormPayload(values);
+
     try {
       if (isEditing) {
         await updateTicket(ticketId, token, {
-          title: values.title,
-          description: values.description,
-          category: values.category,
-          priority: values.priority,
-          status: values.status,
+          title: normalized.title,
+          description: normalized.description,
+          category: normalized.category,
+          priority: normalized.priority,
+          status: normalized.status,
         });
         setSuccessMessage('Ticket updated.');
       } else {
         // The create endpoint sets the status itself and requires createdBy.
         const created = await createTicket(token, {
-          title: values.title,
-          description: values.description,
-          category: values.category,
-          priority: values.priority,
+          title: normalized.title,
+          description: normalized.description,
+          category: normalized.category,
+          priority: normalized.priority,
           createdBy: user?.email ?? '',
         });
         setSuccessMessage(`Ticket created with id ${created.id}.`);
