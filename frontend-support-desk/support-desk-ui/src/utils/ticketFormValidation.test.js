@@ -9,7 +9,7 @@ const VALID_VALUES = {
 };
 
 describe('validateTicketForm', () => {
-  it('returns an error for every required field left empty', () => {
+  it('flags every required field left empty, with a field-specific message', () => {
     const errors = validateTicketForm({
       title: '',
       description: '',
@@ -33,10 +33,32 @@ describe('validateTicketForm', () => {
     expect(errors).toEqual({ title: 'Title is required' });
   });
 
-  it('returns no errors when every field has a value', () => {
-    const errors = validateTicketForm(VALID_VALUES);
+  it('rejects a priority that is not LOW, MEDIUM or HIGH', () => {
+    const errors = validateTicketForm({ ...VALID_VALUES, priority: 'URGENT' });
 
-    expect(errors).toEqual({});
+    expect(errors).toEqual({ priority: 'Priority must be LOW, MEDIUM or HIGH' });
+  });
+
+  it('rejects a status that is not OPEN, IN_PROGRESS or CLOSED', () => {
+    const errors = validateTicketForm({ ...VALID_VALUES, status: 'ARCHIVED' });
+
+    expect(errors).toEqual({ status: 'Status must be OPEN, IN_PROGRESS or CLOSED' });
+  });
+
+  it('is case-sensitive, matching the backend rule exactly', () => {
+    const errors = validateTicketForm({ ...VALID_VALUES, priority: 'high' });
+
+    expect(errors).toEqual({ priority: 'Priority must be LOW, MEDIUM or HIGH' });
+  });
+
+  it('reports "required" rather than "invalid" for a blank priority', () => {
+    const errors = validateTicketForm({ ...VALID_VALUES, priority: '' });
+
+    expect(errors).toEqual({ priority: 'Priority is required' });
+  });
+
+  it('returns no errors when every field is valid', () => {
+    expect(validateTicketForm(VALID_VALUES)).toEqual({});
   });
 });
 
@@ -51,6 +73,10 @@ describe('normalizeTicketFormPayload', () => {
     });
 
     expect(payload).toEqual(VALID_VALUES);
+  });
+
+  it('leaves already-clean values unchanged', () => {
+    expect(normalizeTicketFormPayload(VALID_VALUES)).toEqual(VALID_VALUES);
   });
 });
 
