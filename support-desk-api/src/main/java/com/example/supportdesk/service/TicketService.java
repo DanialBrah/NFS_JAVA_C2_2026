@@ -64,20 +64,17 @@ public class TicketService {
     }
 
     public TicketResponse getTicketById(String id) {
-        Ticket ticket = ticketRepository.findById(id)
-                .orElseThrow(() -> new ResourceNotFoundException("Ticket " + id + " was not found"));
-
-        return toResponse(ticket);
+        return toResponse(findTicketOrThrow(id));
     }
 
     public TicketResponse createTicket(CreateTicketRequest request) {
         Ticket ticket = new Ticket(
-                request.getTitle().trim(),
-                request.getDescription().trim(),
-                request.getCategory().trim(),
-                request.getPriority().trim(),
+                normalizeRequired(request.getTitle()),
+                normalizeRequired(request.getDescription()),
+                normalizeRequired(request.getCategory()),
+                normalizePriority(request.getPriority()),
                 "OPEN",
-                request.getCreatedBy().trim(),
+                normalizeRequired(request.getCreatedBy()),
                 LocalDate.now(ZoneId.systemDefault()).toString()
         );
 
@@ -88,19 +85,35 @@ public class TicketService {
     }
 
     public TicketResponse updateTicket(String id, UpdateTicketRequest request) {
-        Ticket ticket = ticketRepository.findById(id)
-                .orElseThrow(() -> new ResourceNotFoundException("Ticket " + id + " was not found"));
+        Ticket ticket = findTicketOrThrow(id);
 
-        ticket.setTitle(request.getTitle().trim());
-        ticket.setDescription(request.getDescription().trim());
-        ticket.setCategory(request.getCategory().trim());
-        ticket.setPriority(request.getPriority().trim());
-        ticket.setStatus(request.getStatus().trim());
+        ticket.setTitle(normalizeRequired(request.getTitle()));
+        ticket.setDescription(normalizeRequired(request.getDescription()));
+        ticket.setCategory(normalizeRequired(request.getCategory()));
+        ticket.setPriority(normalizePriority(request.getPriority()));
+        ticket.setStatus(normalizeStatus(request.getStatus()));
 
         Ticket updated = ticketRepository.save(ticket);
         logger.info("Updated ticket with id={}", updated.getId());
 
         return toResponse(updated);
+    }
+
+    private Ticket findTicketOrThrow(String id) {
+        return ticketRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("Ticket " + id + " was not found"));
+    }
+
+    private String normalizeRequired(String value) {
+        return value.trim();
+    }
+
+    private String normalizeStatus(String status) {
+        return status.trim();
+    }
+
+    private String normalizePriority(String priority) {
+        return priority.trim();
     }
 
     private boolean hasValue(String value) {
