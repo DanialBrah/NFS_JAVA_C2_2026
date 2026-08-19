@@ -18,6 +18,7 @@ import com.example.supportdesk.dto.UpdateTicketRequest;
 import com.example.supportdesk.exception.ResourceNotFoundException;
 import com.example.supportdesk.model.Ticket;
 import com.example.supportdesk.repository.TicketRepository;
+import com.example.supportdesk.util.InputSanitizer;
 
 @Service
 public class TicketService {
@@ -70,7 +71,7 @@ public class TicketService {
     public TicketResponse createTicket(CreateTicketRequest request) {
         Ticket ticket = new Ticket(
                 normalizeRequired(request.getTitle()),
-                normalizeRequired(request.getDescription()),
+                normalizeMultiline(request.getDescription()),
                 normalizeRequired(request.getCategory()),
                 normalizePriority(request.getPriority()),
                 "OPEN",
@@ -88,7 +89,7 @@ public class TicketService {
         Ticket ticket = findTicketOrThrow(id);
 
         ticket.setTitle(normalizeRequired(request.getTitle()));
-        ticket.setDescription(normalizeRequired(request.getDescription()));
+        ticket.setDescription(normalizeMultiline(request.getDescription()));
         ticket.setCategory(normalizeRequired(request.getCategory()));
         ticket.setPriority(normalizePriority(request.getPriority()));
         ticket.setStatus(normalizeStatus(request.getStatus()));
@@ -105,15 +106,19 @@ public class TicketService {
     }
 
     private String normalizeRequired(String value) {
-        return value.trim();
+        return InputSanitizer.cleanText(value);
+    }
+
+    private String normalizeMultiline(String value) {
+        return InputSanitizer.cleanMultilineText(value);
     }
 
     private String normalizeStatus(String status) {
-        return status.trim();
+        return InputSanitizer.normalizeCode(status);
     }
 
     private String normalizePriority(String priority) {
-        return priority.trim();
+        return InputSanitizer.normalizeCode(priority);
     }
 
     private boolean hasValue(String value) {
