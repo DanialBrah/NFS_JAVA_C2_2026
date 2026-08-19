@@ -1,0 +1,66 @@
+# Broken Docker Compose file for Day 18 troubleshooting lab.
+# This file is intentionally wrong in several places.
+# Students should diagnose and create compose.fixed.yml.
+
+services:
+  mongo:
+    image: mongo:8
+    container_name: asset-tracker-mongo-lab
+    restart: unless-stopped
+    ports:
+
+      - "${MONGO_HOST_PORT:-27017}:27017"
+    volumes:
+      - mongo_lab_data:/data/db
+    healthcheck:
+      test: ["CMD", "mongosh", "--quiet", "--eval", "db.adminCommand('ping').ok"]
+      interval: 10s
+      timeout: 5s
+      retries: 10
+      start_period: 20s
+
+  backend:
+    build:
+      context: ..
+      dockerfile: Dockerfile
+    container_name: asset-tracker-api-lab
+    restart: unless-stopped
+    depends_on:
+      mongo:
+        condition: service_healthy
+    environment:
+      SPRING_PROFILES_ACTIVE: docker
+      SPRING_MONGODB_URI: mongodb://localhost:27017/asset_tracker_db
+      JWT_SECRET: ${APP_JWT_SECRET}
+      APP_JWT_EXPIRATION_MINUTES: ${APP_JWT_EXPIRATION_MINUTES:-60}
+      SERVER_PORT: 8080
+    ports:
+      - "${BACKEND_PORT:-8080}:8080"
+    healthcheck:
+      test: ["CMD", "wget", "-q", "--spider", "http://localhost:8080/api/health"]
+      interval: 30s
+      timeout: 5s
+      retries: 3
+      start_period: 45s
+
+  frontend:
+    build:
+      context: ../frontend
+      dockerfile: Dockerfile
+    container_name: asset-tracker-ui-lab
+    restart: unless-stopped
+    depends_on:
+      api:
+        condition: service_healthy
+
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost/"]
+      interval: 30s
+      timeout: 5s
+      retries: 3
+      start_period: 10s
+    ports:
+      - "${FRONTEND_PORT:-5174}:80"
+
+volumes:
+  mongo_lab_data:
