@@ -1,0 +1,70 @@
+### Day 17 Exercise 03 - Error Tracking Practice (Support Desk API)
+### Run first: mvn spring-boot:run "-Dspring-boot.run.profiles=local"
+### (quote the -D flag in PowerShell, otherwise it gets mis-split and the profile is ignored)
+
+### 1. 401 Unauthorized - no token on a protected endpoint -> expect 401
+GET http://localhost:8081/api/v1/tickets
+
+### 2. Login as seeded admin -> expect 200 with token
+# Replace TOKEN below with the token from this response
+POST http://localhost:8081/api/auth/login
+Content-Type: application/json
+
+{
+  "email": "admin@example.com",
+  "password": "Admin@12345"
+}
+
+### 3. Register a plain USER account -> expect 201 with token
+# Replace USER_TOKEN below with the token from this response
+POST http://localhost:8081/api/auth/register
+Content-Type: application/json
+
+{
+  "name": "Day17 Error Tracking Tester",
+  "email": "tester@example.com",
+  "password": "TesterPass123"
+}
+
+### 4. 403 Forbidden - USER token hitting an ADMIN-only endpoint -> expect 403
+# Replace USER_TOKEN with the token from request 3
+POST http://localhost:8081/api/tickets
+Authorization: Bearer eyJhbGciOiJIUzM4NCJ9.eyJpc3MiOiJzdXBwb3J0LWRlc2stYXBpIiwic3ViIjoidGVzdGVyQGV4YW1wbGUuY29tIiwidXNlcklkIjoiNmE4NWMxMTM5Mjg0ZjczZjVhNDU3ZmY1IiwibmFtZSI6IkRheTE3IEVycm9yIFRyYWNraW5nIFRlc3RlciIsInJvbGUiOiJVU0VSIiwiaWF0IjoxNzg3MTUwNjExLCJleHAiOjE3ODcxNTQyMTF9.QtgNKrT4JpkHYGutIjfSUR2YWXFijRt_JUTn2gDjkoQgVthiDw5PPIG8h3AYvMcS
+Content-Type: application/json
+
+{
+  "title": "Printer broken",
+  "description": "Cannot print",
+  "category": "Hardware",
+  "priority": "HIGH",
+  "createdBy": "day17.tester@example.com"
+}
+
+### 5. 400 Bad Request - all required fields blank -> expect 400
+# Replace USER_TOKEN with the token from request 3
+POST http://localhost:8081/api/v1/tickets
+Authorization: Bearer eyJhbGciOiJIUzM4NCJ9.eyJpc3MiOiJzdXBwb3J0LWRlc2stYXBpIiwic3ViIjoidGVzdGVyQGV4YW1wbGUuY29tIiwidXNlcklkIjoiNmE4NWMxMTM5Mjg0ZjczZjVhNDU3ZmY1IiwibmFtZSI6IkRheTE3IEVycm9yIFRyYWNraW5nIFRlc3RlciIsInJvbGUiOiJVU0VSIiwiaWF0IjoxNzg3MTUwNjExLCJleHAiOjE3ODcxNTQyMTF9.QtgNKrT4JpkHYGutIjfSUR2YWXFijRt_JUTn2gDjkoQgVthiDw5PPIG8h3AYvMcS
+Content-Type: application/json
+
+{
+  "title": "",
+  "description": "",
+  "category": "",
+  "priority": "",
+  "createdBy": ""
+}
+
+### 6. 404 Not Found - well-formed but non-existent ticket id -> expect 404
+# Replace USER_TOKEN with the token from request 3
+GET http://localhost:8081/api/v1/tickets/000000000000000000000000
+Authorization: Bearer eyJhbGciOiJIUzM4NCJ9.eyJpc3MiOiJzdXBwb3J0LWRlc2stYXBpIiwic3ViIjoidGVzdGVyQGV4YW1wbGUuY29tIiwidXNlcklkIjoiNmE4NWMxMTM5Mjg0ZjczZjVhNDU3ZmY1IiwibmFtZSI6IkRheTE3IEVycm9yIFRyYWNraW5nIFRlc3RlciIsInJvbGUiOiJVU0VSIiwiaWF0IjoxNzg3MTUwNjExLCJleHAiOjE3ODcxNTQyMTF9.QtgNKrT4JpkHYGutIjfSUR2YWXFijRt_JUTn2gDjkoQgVthiDw5PPIG8h3AYvMcS
+
+### 7. 409 Conflict - duplicate email (same as request 3) -> expect 409
+POST http://localhost:8081/api/auth/register
+Content-Type: application/json
+
+{
+  "name": "Duplicate Tester",
+  "email": "day17.tester@example.com",
+  "password": "AnotherPass123"
+}
