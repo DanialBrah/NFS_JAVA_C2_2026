@@ -1,0 +1,74 @@
+services:
+  mongo:
+    image: mongo:8
+    container_name: support-desk-mongo
+    restart: unless-stopped
+    # Use a non-default host port to avoid conflict with a local MongoDB
+    # running on 27017, and with the Asset Tracker stack's own compose.yml
+    # (which maps host 27018). Inside Compose, the backend connects to mongo:27017.
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: ${MONGO_INITDB_ROOT_USERNAME:?Set MONGO_INITDB_ROOT_USERNAME in .env. Copy .env.example to .env first.}
+      MONGO_INITDB_ROOT_PASSWORD: ${MONGO_INITDB_ROOT_PASSWORD:?Set MONGO_INITDB_ROOT_PASSWORD in .env. Copy .env.example to .env first.}
+    ports:
+      - "${SD_MONGO_HOST_PORT:-27019}:27017"
+    volumes:
+      - support_desk_mongo_data:/data/db
+    healthcheck:
+      test: ["CMD", "mongosh", "--quiet", "--eval", "db.adminCommand('ping').ok"]
+      interval: 10s
+      timeout: 5s
+      retries: 10
+      start_period: 20s
+
+  backend:
+    build:
+      context: ./support-desk-api
+      dockerfile: Dockerfile
+    container_name: support-desk-api
+    restart: unless-stopped
+    depends_on:
+      mongo:
+        condition: service_healthy
+    environment:
+      # Use the "mongo" service name, not localhost - containers reach each
+      # other over the Compose network by service name.
+      MONGODB_HOST: mongo
+      MONGODB_PORT: 27017
+      MONGODB_DATABASE: support_desk_db
+      # The mongo service only bootstraps a root user (see MONGO_INITDB_ROOT_*
+      # above), so the backend authenticates as that root user against the
+      # admin database - there is no separate app-scoped user in this stack.
+      MONGODB_AUTHENTICATION_DATABASE: admin
+      MONGODB_USERNAME: ${MONGO_INITDB_ROOT_USERNAME:?Set MONGO_INITDB_ROOT_USERNAME in .env. Copy .env.example to .env first.}
+      MONGODB_PASSWORD: ${MONGO_INITDB_ROOT_PASSWORD:?Set MONGO_INITDB_ROOT_PASSWORD in .env. Copy .env.example to .env first.}
+      JWT_SECRET: ${JWT_SECRET:?Set JWT_SECRET in .env. Copy .env.example to .env first.}
+      SERVER_PORT: 8080
+    ports:
+      - "${SD_BACKEND_PORT:-8082}:8080"
+    healthcheck:
+      test: ["CMD", "wget", "-qO-", "http://localhost:8080/api/health"]
+      interval: 30s
+      timeout: 5s
+      retries: 3
+      start_period: 20s
+
+  frontend:
+    build:
+      context: ./frontend-support-desk/support-desk-ui
+      dockerfile: Dockerfile
+    container_name: support-desk-ui
+    restart: unless-stopped
+    depends_on:
+      backend:
+        condition: service_healthy
+    ports:
+      - "${SD_FRONTEND_PORT:-5174}:80"
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost/"]
+      interval: 30s
+      timeout: 5s
+      retries: 3
+      start_period: 10s
+
+volumes:
+  support_desk_mongo_data:
